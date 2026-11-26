@@ -17,7 +17,6 @@
   --card: #fffdf4;
   --line: #d9ddcd;
   --sage-soft: #eef4ec;
-  --sage-chip: #e4ede4;
   --sand: #f8eaca;
   --coral: #e58975;
   --aqua: #418f96;
@@ -36,6 +35,7 @@ html, body {
   color: var(--ink);
   font-family: var(--sans);
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 .app {
@@ -44,8 +44,8 @@ html, body {
   flex-direction: column;
   max-width: 1600px;
   margin: 0 auto;
-  padding: 12px 16px 14px;
-  gap: 12px;
+  padding: 10px 12px calc(14px + env(safe-area-inset-bottom));
+  gap: 10px;
 }
 
 @media (min-width: 960px) {
@@ -62,50 +62,53 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
   flex-shrink: 0;
+  flex-wrap: wrap;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
+  flex: 1 1 210px;
 }
 
 .brand-mark {
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
-  border-radius: 11px;
-  background: #fffdf4;
+  border-radius: 10px;
+  background: var(--card);
   border: 1px solid var(--line);
   display: grid;
   place-items: center;
   box-shadow: 0 1px 2px rgba(37, 74, 67, 0.05);
 }
 
-.brand-text {
-  min-width: 0;
-}
+.brand-text { min-width: 0; }
 
 .brand-title {
   margin: 0;
   font-family: var(--display);
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
+  line-height: 1.25;
   color: var(--ink-strong);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+@media (min-width: 640px) {
+  .brand-title { font-size: 17px; }
+}
+
 .brand-sub {
   margin: 2px 0 0;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.06em;
   color: var(--muted);
@@ -115,45 +118,47 @@ html, body {
   text-overflow: ellipsis;
 }
 
+@media (max-width: 480px) {
+  .brand-sub { display: none; }
+}
+
 .mast-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-shrink: 0;
 }
 
 .pill-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  height: 34px;
-  padding: 0 13px;
+  gap: 5px;
+  height: 33px;
+  padding: 0 11px;
   border-radius: 999px;
   border: 1px solid var(--line);
   background: var(--card);
   color: var(--ink);
   font-family: var(--sans);
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 500;
   cursor: pointer;
+  white-space: nowrap;
   transition: background 0.15s, border-color 0.15s, transform 0.1s;
 }
 
-.pill-btn:hover {
-  background: #f3f6ec;
-  border-color: #c4ccb9;
+@media (min-width: 640px) {
+  .pill-btn { height: 34px; padding: 0 13px; font-size: 13px; gap: 6px; }
 }
 
-.pill-btn:active {
-  transform: translateY(1px);
-}
-
-.pill-btn.ghost {
-  background: transparent;
-}
-
-.pill-btn.ghost:hover {
-  background: #eff3e8;
+.pill-btn:hover { background: #f3f6ec; border-color: #c4ccb9; }
+.pill-btn:active { transform: translateY(1px); }
+.pill-btn.ghost { background: transparent; }
+.pill-btn.ghost:hover { background: #eff3e8; }
+.pill-btn.on {
+  background: var(--ink);
+  color: #faf8f1;
+  border-color: var(--ink);
 }
 
 /* ---------- Main Grid ---------- */
@@ -162,12 +167,12 @@ html, body {
   min-height: 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 14px;
+  gap: 12px;
 }
 
 @media (min-width: 960px) {
   .stage {
-    grid-template-columns: minmax(0, 1fr) clamp(320px, 27vw, 410px);
+    grid-template-columns: minmax(0, 1fr) clamp(325px, 27vw, 410px);
     gap: 16px;
   }
 }
@@ -175,15 +180,17 @@ html, body {
 /* ---------- 3D Diorama Map Card ---------- */
 #map {
   position: relative;
-  min-height: 430px;
-  height: 58dvh;
+  height: 52dvh;
+  min-height: 360px;
+  max-height: 540px;
   border-radius: 18px;
   border: 1px solid var(--line);
   overflow: hidden;
   user-select: none;
+  -webkit-user-select: none;
   background-color: #dfeae1;
   background-image:
-    radial-gradient(circle at 50% 45%, rgba(244, 244, 233, 0.55) 0%, rgba(223, 234, 225, 0) 68%),
+    radial-gradient(circle at 50% 45%, rgba(244, 244, 233, 0.35) 0%, rgba(223, 234, 225, 0) 68%),
     radial-gradient(#7b9b8d55 1.1px, transparent 1.1px);
   background-size: 100% 100%, 16px 16px;
   transition: background-color 0.45s ease, border-color 0.45s ease;
@@ -193,6 +200,7 @@ html, body {
   #map {
     height: 100%;
     min-height: 0;
+    max-height: none;
   }
 }
 
@@ -207,9 +215,10 @@ html[data-lighting="night"] #map {
 
 #map.is-fullscreen {
   position: fixed;
-  inset: 12px;
+  inset: 10px;
   z-index: 50;
   height: auto !important;
+  max-height: none !important;
   box-shadow: 0 24px 60px rgba(18, 35, 32, 0.35);
 }
 
@@ -220,6 +229,7 @@ html[data-lighting="night"] #map {
   cursor: grab;
 }
 
+#scene.pan-cursor { cursor: move; }
 #scene.hot { cursor: pointer; }
 #scene.drag { cursor: grabbing; }
 
@@ -246,8 +256,8 @@ html[data-lighting="night"] #map {
   padding: 5px 8px;
   border-radius: 999px;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(25, 54, 48, 0.14);
-  transform: translate(-50%, calc(-100% - 10px));
+  box-shadow: 0 4px 12px rgba(25, 54, 48, 0.16);
+  transform: translate(-50%, calc(-100% - 9px));
   transition: transform 0.16s ease, background 0.16s ease, color 0.16s ease, border-color 0.16s ease, opacity 0.2s ease;
   white-space: nowrap;
 }
@@ -258,16 +268,16 @@ html[data-lighting="night"] #map {
   left: 50%;
   top: 100%;
   width: 1.5px;
-  height: 10px;
+  height: 9px;
   background: currentColor;
-  opacity: 0.45;
+  opacity: 0.48;
   transform: translateX(-50%);
 }
 
 .pin:hover {
   background: #ffffff;
   border-color: var(--aqua);
-  transform: translate(-50%, calc(-100% - 13px)) scale(1.06);
+  transform: translate(-50%, calc(-100% - 12px)) scale(1.06);
   z-index: 6;
 }
 
@@ -290,9 +300,7 @@ html[data-lighting="night"] #map {
   z-index: 8;
 }
 
-.pin.dim {
-  opacity: 0.28;
-}
+.pin.dim { opacity: 0.28; }
 
 html[data-lighting="night"] .pin {
   background: rgba(24, 39, 60, 0.92);
@@ -314,55 +322,54 @@ html[data-lighting="night"] .pin.active {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 16px;
+  padding: 12px;
 }
 
 @media (min-width: 640px) {
-  .map-hud { padding: 20px; }
+  .map-hud { padding: 18px 20px; }
 }
 
 .hud-top {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 12px;
+  gap: 8px;
 }
 
 .hud-title-box {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  max-width: 65%;
+  gap: 4px;
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .kicker {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.08em;
   color: var(--muted);
   text-transform: uppercase;
 }
 
-html[data-lighting="night"] .kicker {
-  color: #a9bed4;
-}
+html[data-lighting="night"] .kicker { color: #a9bed4; }
 
 .map-h1 {
   margin: 0;
   font-family: var(--display);
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 700;
   line-height: 1.2;
   color: var(--ink-strong);
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
 @media (min-width: 640px) {
-  .map-h1 { font-size: 26px; }
+  .map-h1 { font-size: 25px; }
 }
 
 html[data-lighting="night"] .map-h1 {
@@ -374,18 +381,22 @@ html[data-lighting="night"] .map-h1 {
   pointer-events: auto;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   width: fit-content;
-  padding: 5px 11px;
+  padding: 4px 9px;
   border-radius: 999px;
   background: rgba(255, 253, 244, 0.88);
   border: 1px solid #cfd9cc;
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   color: var(--ink);
   backdrop-filter: blur(4px);
+}
+
+@media (max-width: 520px) {
+  .time-chip .time-label { display: none; }
 }
 
 html[data-lighting="night"] .time-chip {
@@ -397,14 +408,15 @@ html[data-lighting="night"] .time-chip {
 .hud-top-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   pointer-events: auto;
+  flex-shrink: 0;
 }
 
 .seg {
   display: inline-flex;
   align-items: center;
-  padding: 3px;
+  padding: 2px;
   border-radius: 999px;
   background: rgba(255, 253, 244, 0.92);
   border: 1px solid #cfd9cc;
@@ -421,35 +433,26 @@ html[data-lighting="night"] .seg {
   background: transparent;
   color: var(--muted);
   font-family: var(--sans);
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 500;
-  padding: 5px 10px;
+  padding: 4px 8px;
   border-radius: 999px;
   cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
   transition: background 0.15s, color 0.15s;
 }
 
-.seg button.on {
-  background: var(--ink);
-  color: #faf8f1;
+@media (min-width: 640px) {
+  .seg button { font-size: 12px; padding: 5px 10px; }
 }
 
-html[data-lighting="night"] .seg button {
-  color: #b2c5da;
-}
-
-html[data-lighting="night"] .seg button.on {
-  background: #67bfbd;
-  color: #142436;
-}
+.seg button.on { background: var(--ink); color: #faf8f1; }
+html[data-lighting="night"] .seg button { color: #b2c5da; }
+html[data-lighting="night"] .seg button.on { background: #67bfbd; color: #142436; }
 
 .icon-square {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
   border: 1px solid #cfd9cc;
   background: rgba(255, 253, 244, 0.92);
   color: var(--ink);
@@ -459,54 +462,139 @@ html[data-lighting="night"] .seg button.on {
   box-shadow: 0 2px 8px rgba(25, 54, 48, 0.08);
 }
 
-.icon-square:hover {
-  background: #ffffff;
-}
-
+.icon-square:hover { background: #ffffff; }
 html[data-lighting="night"] .icon-square {
   background: rgba(22, 36, 56, 0.9);
   border-color: #3d5678;
   color: #e4eef7;
 }
 
+/* Bottom Map Controls */
 .hud-bottom {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  gap: 12px;
+  gap: 8px;
+}
+
+.hud-bottom-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  pointer-events: auto;
+  flex-wrap: wrap;
 }
 
 .play-pill {
-  pointer-events: auto;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  height: 38px;
-  padding: 0 15px;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px;
   border-radius: 999px;
   border: 1px solid var(--ink-strong);
   background: var(--ink);
   color: #faf8f1;
   font-family: var(--sans);
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 500;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(25, 54, 48, 0.18);
   transition: background 0.15s, transform 0.1s;
 }
 
-.play-pill:hover {
-  background: var(--ink-strong);
-}
-
+.play-pill:hover { background: var(--ink-strong); }
 .play-pill.paused {
   background: var(--card);
   color: var(--ink);
   border-color: #cfd9cc;
 }
 
-.tool-dock {
+.drag-mode-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 34px;
+  padding: 0 11px;
+  border-radius: 999px;
+  border: 1px solid #cfd9cc;
+  background: rgba(255, 253, 244, 0.94);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(25, 54, 48, 0.12);
+}
+
+.drag-mode-pill.pan {
+  background: #e58975;
+  border-color: #d67662;
+  color: #fffdf4;
+}
+
+html[data-lighting="night"] .drag-mode-pill {
+  background: rgba(22, 36, 56, 0.92);
+  border-color: #3d5678;
+  color: #dbe8f4;
+}
+
+html[data-lighting="night"] .drag-mode-pill.pan {
+  background: #e58975;
+  border-color: #e58975;
+  color: #192638;
+}
+
+.hud-bottom-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
   pointer-events: auto;
+}
+
+/* Directional Pad for Pan / Move View */
+.nav-pad {
+  display: grid;
+  grid-template-columns: repeat(3, 28px);
+  grid-template-rows: repeat(3, 26px);
+  gap: 2px;
+  padding: 4px;
+  border-radius: 12px;
+  background: rgba(255, 253, 242, 0.93);
+  border: 1px solid #cfd9cc;
+  box-shadow: 0 4px 12px rgba(25, 54, 48, 0.1);
+}
+
+html[data-lighting="night"] .nav-pad {
+  background: rgba(22, 36, 56, 0.9);
+  border-color: #3d5678;
+}
+
+.nav-pad button {
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  touch-action: manipulation;
+}
+
+.nav-pad button:hover { background: rgba(103, 191, 189, 0.22); }
+.nav-pad button:active { background: var(--ink); color: #fff; }
+.nav-pad .rot-btn { font-size: 13px; color: var(--aqua); }
+.nav-pad .center-dot { font-size: 10px; color: var(--muted); }
+
+html[data-lighting="night"] .nav-pad button { color: #dbe8f4; }
+html[data-lighting="night"] .nav-pad .rot-btn { color: #7ee3df; }
+
+.tool-dock {
   display: inline-flex;
   align-items: center;
   border-radius: 12px;
@@ -522,8 +610,8 @@ html[data-lighting="night"] .tool-dock {
 }
 
 .tool-dock button {
-  width: 36px;
-  height: 34px;
+  width: 34px;
+  height: 32px;
   border: 0;
   border-right: 1px solid rgba(207, 217, 204, 0.65);
   background: transparent;
@@ -536,28 +624,15 @@ html[data-lighting="night"] .tool-dock {
   font-weight: 600;
 }
 
-.tool-dock button:last-child {
-  border-right: 0;
-}
-
-.tool-dock button:hover {
-  background: rgba(103, 191, 189, 0.16);
-}
-
-.tool-dock button.on {
-  background: #e3efe5;
-  color: var(--ink-strong);
-}
+.tool-dock button:last-child { border-right: 0; }
+.tool-dock button:hover { background: rgba(103, 191, 189, 0.16); }
+.tool-dock button.on { background: #e3efe5; color: var(--ink-strong); }
 
 html[data-lighting="night"] .tool-dock button {
   color: #dbe8f4;
   border-right-color: rgba(61, 86, 120, 0.7);
 }
-
-html[data-lighting="night"] .tool-dock button.on {
-  background: #2b4464;
-  color: #7ee3df;
-}
+html[data-lighting="night"] .tool-dock button.on { background: #2b4464; color: #7ee3df; }
 
 /* ---------- Right Sidebar Panel ---------- */
 .side {
@@ -567,13 +642,14 @@ html[data-lighting="night"] .tool-dock button.on {
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 18px;
-  padding: 16px;
+  padding: 14px;
   min-height: 0;
 }
 
 @media (min-width: 960px) {
   .side {
     height: 100%;
+    padding: 16px;
     overflow: hidden;
   }
 }
@@ -611,32 +687,35 @@ html[data-lighting="night"] .tool-dock button.on {
 .side-title {
   margin: 3px 0 0;
   font-family: var(--display);
-  font-size: 19px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--ink-strong);
 }
 
 .side-hint {
-  font-size: 12px;
+  font-size: 11.5px;
   color: var(--muted);
   text-align: right;
   line-height: 1.4;
 }
 
 .side-scroll {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  padding-right: 2px;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.side-scroll::-webkit-scrollbar { width: 5px; }
-.side-scroll::-webkit-scrollbar-thumb { background: #d4dccb; border-radius: 99px; }
+@media (min-width: 960px) {
+  .side-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 2px;
+  }
+  .side-scroll::-webkit-scrollbar { width: 5px; }
+  .side-scroll::-webkit-scrollbar-thumb { background: #d4dccb; border-radius: 99px; }
+}
 
-/* Quick Filter Chips (Overview Mode) */
 .filter-row {
   display: flex;
   flex-wrap: wrap;
@@ -653,7 +732,6 @@ html[data-lighting="night"] .tool-dock button.on {
   padding: 4px 10px;
   border-radius: 999px;
   cursor: pointer;
-  transition: all 0.15s;
 }
 
 .filter-chip.on {
@@ -662,17 +740,15 @@ html[data-lighting="night"] .tool-dock button.on {
   color: #faf8f1;
 }
 
-/* Zone Directory List */
 .zone-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 8px;
+  grid-template-columns: 1fr;
+  gap: 7px;
 }
 
-@media (min-width: 960px) {
+@media (min-width: 540px) and (max-width: 959px) {
   .zone-list {
-    grid-template-columns: 1fr;
-    gap: 7px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -680,6 +756,7 @@ html[data-lighting="night"] .tool-dock button.on {
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
   padding: 8px 10px;
   border-radius: 12px;
   border: 1px solid var(--line);
@@ -696,13 +773,11 @@ html[data-lighting="night"] .tool-dock button.on {
   transform: translateY(-1px);
 }
 
-.zone-card.visited {
-  border-left: 3px solid #67bfbd;
-}
+.zone-card.visited { border-left: 3px solid #67bfbd; }
 
 .zone-badge {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   border-radius: 10px;
   flex-shrink: 0;
   display: grid;
@@ -714,10 +789,7 @@ html[data-lighting="night"] .tool-dock button.on {
   border: 1px solid rgba(37, 74, 67, 0.1);
 }
 
-.zone-meta {
-  min-width: 0;
-  flex: 1;
-}
+.zone-meta { min-width: 0; flex: 1; }
 
 .zone-name {
   display: block;
@@ -740,19 +812,10 @@ html[data-lighting="night"] .tool-dock button.on {
   text-overflow: ellipsis;
 }
 
-.zone-arrow {
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--muted);
-  flex-shrink: 0;
-}
+.zone-arrow { font-family: var(--mono); font-size: 12px; color: var(--muted); flex-shrink: 0; }
 
 /* Zone Detail View */
-.detail-view {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+.detail-view { display: flex; flex-direction: column; gap: 10px; }
 
 .back-bar {
   display: flex;
@@ -775,14 +838,9 @@ html[data-lighting="night"] .tool-dock button.on {
   cursor: pointer;
 }
 
-.back-btn:hover {
-  background: #e2ece2;
-}
+.back-btn:hover { background: #e2ece2; }
 
-.nav-arrows {
-  display: inline-flex;
-  gap: 4px;
-}
+.nav-arrows { display: inline-flex; gap: 4px; }
 
 .nav-arrows button {
   width: 28px;
@@ -796,9 +854,7 @@ html[data-lighting="night"] .tool-dock button.on {
   font-size: 12px;
 }
 
-.nav-arrows button:hover {
-  background: var(--sage-soft);
-}
+.nav-arrows button:hover { background: var(--sage-soft); }
 
 .zone-hero {
   padding: 12px 13px;
@@ -814,12 +870,7 @@ html[data-lighting="night"] .tool-dock button.on {
   gap: 8px;
 }
 
-.zone-code {
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--aqua);
-}
+.zone-code { font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--aqua); }
 
 .zone-cat {
   font-size: 11px;
@@ -838,18 +889,9 @@ html[data-lighting="night"] .tool-dock button.on {
   color: var(--ink-strong);
 }
 
-.zone-hero p {
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.6;
-  color: #465b53;
-}
+.zone-hero p { margin: 0; font-size: 13px; line-height: 1.6; color: #465b53; }
 
-.node-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
+.node-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
 
 .node-tab {
   border: 1px solid #cdd8cb;
@@ -862,18 +904,10 @@ html[data-lighting="night"] .tool-dock button.on {
   border-radius: 10px;
   cursor: pointer;
   text-align: left;
-  transition: all 0.14s;
 }
 
-.node-tab:hover {
-  background: var(--sage-soft);
-}
-
-.node-tab.on {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: #faf8f1;
-}
+.node-tab:hover { background: var(--sage-soft); }
+.node-tab.on { background: var(--ink); border-color: var(--ink); color: #faf8f1; }
 
 .node-body {
   padding: 13px 14px;
@@ -882,18 +916,8 @@ html[data-lighting="night"] .tool-dock button.on {
   border: 1px solid var(--line);
 }
 
-.node-body h4 {
-  margin: 0 0 7px;
-  font-size: 15px;
-  color: var(--ink-strong);
-}
-
-.node-body p {
-  margin: 0;
-  font-size: 13.5px;
-  line-height: 1.75;
-  color: #364b44;
-}
+.node-body h4 { margin: 0 0 7px; font-size: 15px; color: var(--ink-strong); }
+.node-body p { margin: 0; font-size: 13.5px; line-height: 1.75; color: #364b44; }
 
 .node-links {
   margin: 10px 0 0;
@@ -908,11 +932,6 @@ html[data-lighting="night"] .tool-dock button.on {
   font-weight: 500;
   text-decoration: none;
   border-bottom: 1px solid rgba(65, 143, 150, 0.35);
-}
-
-.node-links a:hover {
-  color: var(--ink-strong);
-  border-bottom-color: var(--ink-strong);
 }
 
 /* Ticket-Stub Bottom Status Card */
@@ -945,47 +964,12 @@ html[data-lighting="night"] .tool-dock button.on {
 .admission::before { left: -7px; }
 .admission::after { right: -7px; }
 
-.adm-left {
-  min-width: 0;
-}
-
-.adm-kicker {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  color: #82693a;
-  text-transform: uppercase;
-}
-
-.adm-view {
-  margin-top: 2px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--ink-strong);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.adm-right {
-  flex-shrink: 0;
-  padding-left: 12px;
-  border-left: 1.5px dashed #d3be8b;
-  text-align: right;
-}
-
-.adm-prog {
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink-strong);
-}
-
-.adm-sub {
-  font-size: 10.5px;
-  color: #7c673c;
-}
+.adm-left { min-width: 0; }
+.adm-kicker { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.06em; color: #82693a; text-transform: uppercase; }
+.adm-view { margin-top: 2px; font-size: 13px; font-weight: 700; color: var(--ink-strong); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.adm-right { flex-shrink: 0; padding-left: 12px; border-left: 1.5px dashed #d3be8b; text-align: right; }
+.adm-prog { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--ink-strong); }
+.adm-sub { font-size: 10.5px; color: #7c673c; }
 
 /* ---------- Footer ---------- */
 .foot {
@@ -1000,13 +984,7 @@ html[data-lighting="night"] .tool-dock button.on {
   padding: 0 2px;
 }
 
-.foot-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 500;
-  color: var(--ink);
-}
+.foot-status { display: inline-flex; align-items: center; gap: 6px; font-weight: 500; color: var(--ink); }
 
 .status-dot {
   width: 8px;
@@ -1027,9 +1005,9 @@ dialog#help-dialog {
   border-radius: 18px;
   background: var(--card);
   color: var(--ink);
-  padding: 22px;
+  padding: 20px;
   max-width: 440px;
-  width: calc(100vw - 32px);
+  width: calc(100vw - 28px);
   box-shadow: 0 20px 50px rgba(25, 54, 48, 0.22);
 }
 
@@ -1038,24 +1016,9 @@ dialog#help-dialog::backdrop {
   backdrop-filter: blur(3px);
 }
 
-.dlg-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 14px;
-}
-
-.dlg-head h2 {
-  margin: 0;
-  font-family: var(--display);
-  font-size: 19px;
-}
-
-.dlg-list {
-  display: grid;
-  gap: 10px;
-}
-
+.dlg-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.dlg-head h2 { margin: 0; font-family: var(--display); font-size: 19px; }
+.dlg-list { display: grid; gap: 10px; }
 .dlg-item {
   display: flex;
   align-items: flex-start;
@@ -1067,7 +1030,6 @@ dialog#help-dialog::backdrop {
   font-size: 13px;
   line-height: 1.5;
 }
-
 .dlg-badge {
   flex-shrink: 0;
   padding: 3px 8px;
@@ -1086,7 +1048,7 @@ dialog#help-dialog::backdrop {
   <header class="masthead">
     <div class="brand">
       <div class="brand-mark" aria-hidden="true">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
           <path d="M12 2.5L20 7V17L12 21.5L4 17V7L12 2.5Z" fill="#e4ede4" stroke="#254a43" stroke-width="1.6"/>
           <path d="M12 2.5L20 7L12 11.5L4 7L12 2.5Z" fill="#67bfbd" stroke="#254a43" stroke-width="1.4"/>
           <circle cx="12" cy="14.2" r="2.3" fill="#e58975" stroke="#254a43" stroke-width="1.3"/>
@@ -1098,6 +1060,10 @@ dialog#help-dialog::backdrop {
       </div>
     </div>
     <div class="mast-actions">
+      <button id="music-btn" class="pill-btn" type="button" title="開啟或關閉輕鬆背景音樂">
+        <span id="music-icon">♪</span>
+        <span id="music-text">音樂關閉</span>
+      </button>
       <button id="overview-btn" class="pill-btn ghost" type="button" title="回到全區鳥瞰">全區鳥瞰</button>
       <button id="help-btn" class="pill-btn" type="button">操作指南</button>
     </div>
@@ -1111,17 +1077,17 @@ dialog#help-dialog::backdrop {
         <div class="hud-top">
           <div class="hud-title-box">
             <span class="kicker">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="8"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
               </svg>
               <span id="hud-kicker">AI CAMPUS MAP</span>
             </span>
             <h1 id="hud-title" class="map-h1">認識雲端與地端AI</h1>
             <div class="time-chip">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
               </svg>
-              <span>臺灣時間 <span id="tw-clock">--:--:--</span></span>
+              <span><span class="time-label">臺灣時間 </span><span id="tw-clock">--:--:--</span></span>
             </div>
           </div>
           <div class="hud-top-right">
@@ -1131,7 +1097,7 @@ dialog#help-dialog::backdrop {
               <button type="button" data-mode="night">夜晚</button>
             </div>
             <button id="fs-btn" class="icon-square" type="button" title="切換全螢幕">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
               </svg>
             </button>
@@ -1139,24 +1105,44 @@ dialog#help-dialog::backdrop {
         </div>
 
         <div class="hud-bottom">
-          <button id="motion-btn" class="play-pill" type="button">
-            <span id="motion-icon">❚❚</span>
-            <span id="motion-text">暫停動態</span>
-          </button>
-          <div class="tool-dock" role="group" aria-label="視角控制">
-            <button id="pin-toggle" class="on" type="button" title="顯示或隱藏園區地標">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 21s-6-5.4-6-10a6 6 0 1 1 12 0c0 4.6-6 10-6 10z"/>
-                <circle cx="12" cy="11" r="2"/>
-              </svg>
+          <div class="hud-bottom-left">
+            <button id="motion-btn" class="play-pill" type="button">
+              <span id="motion-icon">❚❚</span>
+              <span id="motion-text">暫停動態</span>
             </button>
-            <button id="zoom-out" type="button" title="縮小視角">−</button>
-            <button id="zoom-in" type="button" title="放大視角">+</button>
-            <button id="home-btn" type="button" title="重設為全區鳥瞰">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>
-              </svg>
+            <button id="drag-mode-btn" class="drag-mode-pill" type="button" title="切換拖曳手勢為旋轉或平移視角">
+              <span id="drag-mode-icon">⟳</span>
+              <span id="drag-mode-text">拖曳：旋轉</span>
             </button>
+          </div>
+
+          <div class="hud-bottom-right">
+            <div class="nav-pad" aria-label="方向移動與旋轉視角">
+              <button type="button" class="rot-btn" data-nav="rotL" title="向左旋轉視角">↺</button>
+              <button type="button" data-nav="up" title="向上移動視角">↑</button>
+              <button type="button" class="rot-btn" data-nav="rotR" title="向右旋轉視角">↻</button>
+              <button type="button" data-nav="left" title="向左移動視角">←</button>
+              <button type="button" class="center-dot" data-nav="center" title="回到中心">●</button>
+              <button type="button" data-nav="right" title="向右移動視角">→</button>
+              <span></span>
+              <button type="button" data-nav="down" title="向下移動視角">↓</button>
+              <span></span>
+            </div>
+            <div class="tool-dock" role="group" aria-label="視角控制">
+              <button id="pin-toggle" class="on" type="button" title="顯示或隱藏園區地標">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 21s-6-5.4-6-10a6 6 0 1 1 12 0c0 4.6-6 10-6 10z"/>
+                  <circle cx="12" cy="11" r="2"/>
+                </svg>
+              </button>
+              <button id="zoom-out" type="button" title="縮小視角">−</button>
+              <button id="zoom-in" type="button" title="放大視角">+</button>
+              <button id="home-btn" type="button" title="重設為全區鳥瞰">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -1187,7 +1173,7 @@ dialog#help-dialog::backdrop {
   </main>
 
   <footer class="foot">
-    <span>左鍵拖曳旋轉視角・右鍵或雙指平移・滾輪縮放・點擊展館或編號查看詳細知識</span>
+    <span>拖曳旋轉・切換「拖曳：平移」或按右下方向鍵移動視角・點擊展館探索知識</span>
     <span class="foot-status"><span id="status-dot" class="status-dot"></span><span id="status-label">園區動態運行中</span></span>
   </footer>
 </div>
@@ -1198,26 +1184,26 @@ dialog#help-dialog::backdrop {
     <button id="dlg-close" class="pill-btn" type="button">關閉</button>
   </div>
   <div class="dlg-list">
-    <div class="dlg-item"><span class="dlg-badge">拖曳</span><span>左鍵拖曳或單指滑動可旋轉等角立體園區；右鍵拖曳可平移位置。</span></div>
+    <div class="dlg-item"><span class="dlg-badge">移動</span><span>點擊左下角「拖曳：旋轉 / 平移」切換手勢模式，或長按右下角方向鍵（↑↓←→ / ↺↻）移動視角。</span></div>
     <div class="dlg-item"><span class="dlg-badge">縮放</span><span>滑鼠滾輪、雙指縮放，或點擊右下角 ＋ / － 與鍵盤 + / - 鍵。</span></div>
     <div class="dlg-item"><span class="dlg-badge">探索</span><span>點擊畫面中的 3D 展館、編號地標或右側列表，鏡頭會自動飛往該展館並展開知識卡。</span></div>
-    <div class="dlg-item"><span class="dlg-badge">日夜</span><span>右上角可切換「自動 / 白天 / 夜晚」光影，自動模式會依臺灣時間亮燈。</span></div>
+    <div class="dlg-item"><span class="dlg-badge">音效</span><span>點擊右上角「音樂關閉 / 開啟」可播放輕鬆的園區背景音樂；可自由切換日夜光影。</span></div>
   </div>
 </dialog>
 
 <script>
 const ZONES = [
-  { code:'01', en:'AI GATEWAY', cat:'基礎入門', t:'AI 世界入口', d:'認識人工智慧、生成式 AI 與大型語言模型。', bg:'#d9f0ec', ac:0x67bfbd, pos:[0, 0] },
-  { code:'02', en:'CLOUD AI', cat:'雲端架構', t:'雲端 AI 島', d:'透過網際網路連接遠端資料中心的 AI 服務，依使用量或訂閱付費。', bg:'#d8eef4', ac:0x72c4d1, pos:[4.6, -6.2] },
-  { code:'03', en:'ON-PREM AI', cat:'地端架構', t:'地端 AI 島', d:'AI 部署在企業自己的電腦與伺服器中，資料留在內部環境。', bg:'#fae2db', ac:0xe58975, pos:[-5.8, -5.8] },
-  { code:'04', en:'AI TOOLS', cat:'軟體生態', t:'AI 軟體工具島', d:'對話、推論、知識管理與開發自動化工具。', bg:'#f7ecd2', ac:0xe7bd64, pos:[8.4, -1.6] },
-  { code:'05', en:'AI HARDWARE', cat:'算力硬體', t:'AI 硬體設備島', d:'AI PC、工作站、伺服器與 Edge AI 設備。', bg:'#dce6ea', ac:0x31596c, pos:[-8.6, 0.4] },
-  { code:'06', en:'AI MODELS', cat:'模型規格', t:'AI 模型島', d:'參數量、量化與 GPU 記憶體之間的關係。', bg:'#dfeee3', ac:0x418f96, pos:[-7.2, 6.2] },
-  { code:'07', en:'RAG KNOWLEDGE', cat:'知識管理', t:'AI 知識管理島', d:'讓 AI 讀懂企業自己的文件（RAG）。', bg:'#f7e3e8', ac:0xe9a7b2, pos:[7.8, 5.2] },
-  { code:'08', en:'HYBRID COMPARE', cat:'架構比較', t:'雲端與地端比較島', d:'依需求評估，也可以採用混合式架構。', bg:'#f5ebd7', ac:0xbd936c, pos:[-0.4, -8.4] },
-  { code:'09', en:'ENTERPRISE', cat:'產業應用', t:'企業 AI 應用島', d:'製造、金融、教育、醫療、零售與軌道運輸。', bg:'#e3f0df', ac:0x91bc89, pos:[2.4, 7.6] },
-  { code:'10', en:'HANDS-ON LAB', cat:'實作關卡', t:'AI 實作實驗室', d:'六個關卡，親手建置自己的 AI。', bg:'#d9f0ec', ac:0x67bfbd, pos:[-2.8, 4.4] },
-  { code:'11', en:'FUTURE MAP', cat:'趨勢藍圖', t:'AI 未來與學習行囊', d:'建立屬於自己的 AI 技術地圖。', bg:'#f7ecd2', ac:0xe7bd64, pos:[4.5, 2.2] }
+  { code:'01', en:'AI GATEWAY', cat:'基礎入門', t:'AI 世界入口', d:'認識人工智慧、生成式 AI 與大型語言模型。', bg:'#d9f0ec', pos:[0, 0.2] },
+  { code:'02', en:'CLOUD AI', cat:'雲端架構', t:'雲端 AI 島', d:'透過網際網路連接遠端資料中心的 AI 服務，依使用量或訂閱付費。', bg:'#d8eef4', pos:[4.8, -5.6] },
+  { code:'03', en:'ON-PREM AI', cat:'地端架構', t:'地端 AI 島', d:'AI 部署在企業自己的電腦與伺服器中，資料留在內部環境。', bg:'#fae2db', pos:[-5.2, -5.6] },
+  { code:'04', en:'AI TOOLS', cat:'軟體生態', t:'AI 軟體工具島', d:'對話、推論、知識管理與開發自動化工具。', bg:'#f7ecd2', pos:[7.4, -0.4] },
+  { code:'05', en:'AI HARDWARE', cat:'算力硬體', t:'AI 硬體設備島', d:'AI PC、工作站、伺服器與 Edge AI 設備。', bg:'#dce6ea', pos:[-7.4, -0.4] },
+  { code:'06', en:'AI MODELS', cat:'模型規格', t:'AI 模型島', d:'參數量、量化與 GPU 記憶體之間的關係。', bg:'#dfeee3', pos:[-6.4, 5.2] },
+  { code:'07', en:'RAG KNOWLEDGE', cat:'知識管理', t:'AI 知識管理島', d:'讓 AI 讀懂企業自己的文件（RAG）。', bg:'#f7e3e8', pos:[6.8, 5.0] },
+  { code:'08', en:'HYBRID COMPARE', cat:'架構比較', t:'雲端與地端比較島', d:'依需求評估，也可以採用混合式架構。', bg:'#f5ebd7', pos:[0, -6.8] },
+  { code:'09', en:'ENTERPRISE', cat:'產業應用', t:'企業 AI 應用島', d:'製造、金融、教育、醫療、零售與軌道運輸。', bg:'#e3f0df', pos:[2.4, 6.2] },
+  { code:'10', en:'HANDS-ON LAB', cat:'實作關卡', t:'AI 實作實驗室', d:'六個關卡，親手建置自己的 AI。', bg:'#d9f0ec', pos:[-2.6, 5.6] },
+  { code:'11', en:'FUTURE MAP', cat:'趨勢藍圖', t:'AI 未來與學習行囊', d:'建立屬於自己的 AI 技術地圖。', bg:'#f7ecd2', pos:[4.2, 2.2] }
 ];
 
 const KNOW = {
@@ -1309,7 +1295,98 @@ const KNOW = {
 ]
 };
 
-/* ---------- Three.js Diorama Renderer & Lighting ---------- */
+/* ---------- Relaxing Procedural Web Audio Synthesizer ---------- */
+class RelaxingAudio {
+  constructor() {
+    this.ctx = null;
+    this.master = null;
+    this.playing = false;
+    this.timer = null;
+    this.step = 0;
+    // Warm Cmaj9 / Fmaj7 / Am9 / G6 pentatonic melody frequencies
+    this.chords = [
+      [261.63, 329.63, 392.00, 493.88],
+      [174.61, 261.63, 329.63, 440.00],
+      [220.00, 261.63, 329.63, 392.00],
+      [196.00, 293.66, 329.63, 440.00]
+    ];
+    this.melody = [523.25, 659.25, 587.33, 493.88, 523.25, 783.99, 659.25, 587.33];
+  }
+  init() {
+    if (this.ctx) return;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    this.ctx = new AC();
+    this.master = this.ctx.createGain();
+    this.master.gain.value = 0.0001;
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 1700;
+    this.master.connect(filter);
+    filter.connect(this.ctx.destination);
+  }
+  playTone(freq, dur, vol, type = 'sine') {
+    if (!this.ctx || !this.playing) return;
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, now);
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(vol, now + 0.04);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+    osc.connect(g);
+    g.connect(this.master);
+    osc.start(now);
+    osc.stop(now + dur + 0.05);
+  }
+  tick() {
+    if (!this.playing) return;
+    const bar = Math.floor(this.step / 4) % this.chords.length;
+    const beat = this.step % 4;
+    if (beat === 0) {
+      this.chords[bar].forEach((f, idx) => this.playTone(f, 2.5, 0.055 - idx * 0.007, 'triangle'));
+    }
+    if (beat === 1 || beat === 3) {
+      const m = this.melody[(this.step + bar) % this.melody.length];
+      this.playTone(m, 0.9, 0.045, 'sine');
+    }
+    this.step++;
+  }
+  playClick() {
+    if (!this.playing || !this.ctx) return;
+    this.playTone(659.25, 0.18, 0.04, 'sine');
+  }
+  toggle() {
+    this.init();
+    if (!this.ctx) return false;
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+    this.playing = !this.playing;
+    const now = this.ctx.currentTime;
+    if (this.playing) {
+      this.master.gain.cancelScheduledValues(now);
+      this.master.gain.setValueAtTime(Math.max(this.master.gain.value, 0.0001), now);
+      this.master.gain.exponentialRampToValueAtTime(0.7, now + 0.35);
+      this.tick();
+      this.timer = setInterval(() => this.tick(), 650);
+    } else {
+      clearInterval(this.timer);
+      this.master.gain.cancelScheduledValues(now);
+      this.master.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
+    }
+    return this.playing;
+  }
+}
+const audio = new RelaxingAudio();
+const musicBtn = document.getElementById('music-btn');
+const musicText = document.getElementById('music-text');
+musicBtn.addEventListener('click', () => {
+  const on = audio.toggle();
+  musicBtn.classList.toggle('on', on);
+  musicText.textContent = on ? '音樂開啟' : '音樂關閉';
+});
+
+/* ---------- Three.js Diorama Renderer & Crisp Sunlit Palette ---------- */
 const mapEl = document.getElementById('map');
 const sceneHost = document.getElementById('scene');
 const pinsEl = document.getElementById('pins');
@@ -1327,10 +1404,10 @@ sceneHost.appendChild(renderer.domElement);
 const scene = new THREE.Scene();
 const camera = new THREE.OrthographicCamera(-16, 16, 12, -12, 0.1, 220);
 
-const hemiLight = new THREE.HemisphereLight(0xf6fbfa, 0xbbc8b7, 1.55);
+const hemiLight = new THREE.HemisphereLight(0xf6fbfa, 0xa8baa2, 0.92);
 scene.add(hemiLight);
 
-const sunLight = new THREE.DirectionalLight(0xfff6e7, 1.95);
+const sunLight = new THREE.DirectionalLight(0xfff5e4, 1.32);
 sunLight.position.set(-16, 42, 18);
 sunLight.castShadow = true;
 const shadowSz = window.innerWidth < 600 ? 1024 : 2048;
@@ -1344,7 +1421,7 @@ sunLight.shadow.camera.far = 95;
 sunLight.shadow.bias = -0.00035;
 scene.add(sunLight);
 
-/* ---------- Procedural Textures (Drop Shadow & Night Glows) ---------- */
+/* ---------- Procedural Textures ---------- */
 function makeGlowTex(inner, outer) {
   const c = document.createElement('canvas');
   c.width = c.height = 128;
@@ -1377,14 +1454,14 @@ function makeBoardShadowTex() {
 /* ---------- Material & Geometry Helpers ---------- */
 const matCache = new Map();
 function getMat(color, opts = {}) {
-  const key = `${color}_${opts.r ?? 0.78}_${opts.m ?? 0.02}_${opts.t ?? 1}_${opts.basic ? 1 : 0}_${opts.e ?? 0}`;
+  const key = `${color}_${opts.r ?? 0.78}_${opts.m ?? 0.025}_${opts.t ?? 1}_${opts.basic ? 1 : 0}_${opts.e ?? 0}`;
   if (matCache.has(key)) return matCache.get(key);
   const m = opts.basic
     ? new THREE.MeshBasicMaterial({ color, transparent: opts.t !== undefined, opacity: opts.t ?? 1 })
     : new THREE.MeshStandardMaterial({
         color,
         roughness: opts.r ?? 0.78,
-        metalness: opts.m ?? 0.02,
+        metalness: opts.m ?? 0.025,
         transparent: opts.t !== undefined,
         opacity: opts.t ?? 1,
         ...(opts.e ? { emissive: color, emissiveIntensity: opts.e } : {})
@@ -1424,45 +1501,80 @@ function addGlow(parent, x, y, z, scale = 1.6, kind = 'warm') {
   sp.position.set(x, y, z);
   sp.scale.set(scale, scale, 1);
   parent.add(sp);
-  nightGlows.push({ mat, base: kind === 'cyan' ? 0.62 : 0.72 });
+  nightGlows.push({ mat, base: kind === 'cyan' ? 0.65 : 0.78 });
   return sp;
 }
 
 function addLamp(parent, x, z) {
-  addCyl(parent, 0.04, 0.055, 0.95, 6, 0x31596c, x, 0.47, z);
-  const bulbMat = new THREE.MeshBasicMaterial({ color: 0xfff0c4 });
+  addCyl(parent, 0.04, 0.055, 0.92, 6, 0x31596c, x, 0.46, z);
+  const bulbMat = new THREE.MeshBasicMaterial({ color: 0xf4f8f5 });
   const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.11, 10, 8), bulbMat);
-  bulb.position.set(x, 0.98, z);
+  bulb.position.set(x, 0.95, z);
   parent.add(bulb);
   nightBulbs.push(bulbMat);
-  addGlow(parent, x, 0.98, z, 2.1, 'warm');
+  addGlow(parent, x, 0.95, z, 2.2, 'warm');
 }
 
 function addTree(parent, x, z, s = 1, tone = 0) {
   const g = new THREE.Group();
   g.position.set(x, 0, z);
   g.scale.setScalar(s);
-  const leafPalette = [0x91bc89, 0x9ec692, 0xa8ca8e];
+  const leafPalette = [0x82b379, 0x93c186, 0xa1c787];
   const lc = leafPalette[tone % 3];
-  addCyl(g, 0.07, 0.1, 0.55, 6, 0xbd936c, 0, 0.27, 0);
-  addSph(g, 0.42, lc, 0, 0.76, 0);
-  addSph(g, 0.28, leafPalette[(tone + 1) % 3], 0.2, 0.66, 0.12);
-  addSph(g, 0.25, leafPalette[(tone + 2) % 3], -0.18, 0.68, -0.1);
+  addCyl(g, 0.06, 0.1, 0.56, 6, 0xb5865c, 0, 0.28, 0);
+  addSph(g, 0.42, lc, 0, 0.78, 0);
+  addSph(g, 0.28, leafPalette[(tone + 1) % 3], 0.2, 0.68, 0.12);
+  addSph(g, 0.26, leafPalette[(tone + 2) % 3], -0.18, 0.7, -0.1);
+  addSph(g, 0.22, leafPalette[tone % 3], 0.04, 0.96, -0.06);
   parent.add(g);
+}
+
+function addFlowerbed(parent, x, z, ry = 0) {
+  const g = new THREE.Group();
+  g.position.set(x, 0.04, z);
+  g.rotation.y = ry;
+  addBox(g, 1.05, 0.14, 0.42, 0xfff1d8, 0, 0.07, 0);
+  addBox(g, 0.93, 0.12, 0.3, 0x7da86f, 0, 0.12, 0);
+  const fc = [0xe58975, 0xe7bd64, 0xe9a7b2, 0xfaf8f1];
+  for (let i = -3; i <= 3; i++) {
+    addSph(g, 0.065, fc[Math.abs(i) % fc.length], i * 0.13, 0.21, (i % 2) * 0.06);
+  }
+  parent.add(g);
+}
+
+function addWinGrid(parent, x, y, z, cols, rows, sx, sy, w = 0.1, h = 0.14, color = 0x31596c, glowAtNight = false) {
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const px = x + (c - (cols - 1) / 2) * sx;
+      const py = y + (r - (rows - 1) / 2) * sy;
+      if (glowAtNight) {
+        const wm = new THREE.MeshBasicMaterial({ color });
+        const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.03), wm);
+        mesh.position.set(px, py, z);
+        parent.add(mesh);
+        nightBulbs.push(wm);
+      } else {
+        addBox(parent, w, h, 0.03, color, px, py, z, { noShadow: true });
+      }
+    }
+  }
 }
 
 function addBench(parent, x, z, ry = 0, parasol = false) {
   const g = new THREE.Group();
   g.position.set(x, 0, z);
   g.rotation.y = ry;
-  addBox(g, 0.7, 0.07, 0.26, 0xbd936c, 0, 0.22, 0);
-  addBox(g, 0.7, 0.22, 0.06, 0xbd936c, 0, 0.36, -0.1);
+  addBox(g, 0.72, 0.07, 0.26, 0xbd936c, 0, 0.22, 0);
+  addBox(g, 0.72, 0.22, 0.06, 0xbd936c, 0, 0.36, -0.1);
   addBox(g, 0.06, 0.22, 0.2, 0x31596c, -0.26, 0.11, 0);
   addBox(g, 0.06, 0.22, 0.2, 0x31596c, 0.26, 0.11, 0);
   if (parasol) {
-    addCyl(g, 0.03, 0.03, 1.05, 6, 0xfff1d8, 0.45, 0.52, 0);
-    addCone(g, 0.56, 0.24, 8, 0xe58975, 0.45, 1.06, 0);
-    addCone(g, 0.42, 0.25, 8, 0xfff1d8, 0.45, 1.07, 0, { noShadow: true });
+    addCyl(g, 0.03, 0.03, 1.08, 6, 0xfff1d8, 0.45, 0.54, 0);
+    for (let k = 0; k < 6; k++) {
+      const a = (k / 6) * Math.PI * 2;
+      const wedge = addCone(g, 0.28, 0.24, 4, k % 2 ? 0xe58975 : 0xfff1d8, 0.45 + Math.cos(a) * 0.22, 1.08, Math.sin(a) * 0.22);
+      wedge.rotation.y = -a;
+    }
   }
   parent.add(g);
 }
@@ -1471,10 +1583,9 @@ function addBench(parent, x, z, ry = 0, parasol = false) {
 const board = new THREE.Group();
 scene.add(board);
 
-// Drop shadow & ShadowMaterial catcher
 const shadowCatcher = new THREE.Mesh(
   new THREE.PlaneGeometry(54, 54),
-  new THREE.ShadowMaterial({ opacity: 0.19 })
+  new THREE.ShadowMaterial({ opacity: 0.2 })
 );
 shadowCatcher.rotation.x = -Math.PI / 2;
 shadowCatcher.position.y = -0.96;
@@ -1482,86 +1593,103 @@ shadowCatcher.receiveShadow = true;
 board.add(shadowCatcher);
 
 const boardShadowPlane = new THREE.Mesh(
-  new THREE.PlaneGeometry(31.5, 31.5),
-  new THREE.MeshBasicMaterial({ map: makeBoardShadowTex(), transparent: true, opacity: 0.24, depthWrite: false })
+  new THREE.PlaneGeometry(30.5, 30.5),
+  new THREE.MeshBasicMaterial({ map: makeBoardShadowTex(), transparent: true, opacity: 0.25, depthWrite: false })
 );
 boardShadowPlane.rotation.x = -Math.PI / 2;
 boardShadowPlane.position.set(0.4, -0.97, 0.5);
 board.add(boardShadowPlane);
 
-// Square elevated turf plinth (24 x 24 top + front road extension)
-addBox(board, 24.4, 0.78, 24.4, 0x76aaa9, 0, -0.54, 0);
-addBox(board, 24.0, 0.18, 24.0, 0xa1c8bc, 0, -0.09, 0);
-addBox(board, 23.4, 0.08, 23.4, 0xb9d7ae, 0, 0.02, 0, { noShadow: true });
+// Crisp vibrant turquoise plinth & lush spring-green turf
+addBox(board, 23.8, 0.78, 23.8, 0x4fb3b0, 0, -0.54, 0);
+addBox(board, 23.4, 0.18, 23.4, 0x7cd1c8, 0, -0.09, 0);
+addBox(board, 22.8, 0.08, 22.8, 0x9ed48e, 0, 0.02, 0, { noShadow: true });
 
-// Front 2-lane avenue & sidewalks along +Z edge (z = 9.9 to 11.7)
-addBox(board, 23.4, 0.05, 2.2, 0x5c707a, 0, 0.05, 10.6, { noShadow: true });
-addBox(board, 23.4, 0.06, 0.42, 0xf3e3c6, 0, 0.06, 9.35, { noShadow: true });
-for (let x = -10.5; x <= 10.5; x += 1.8) {
-  addBox(board, 0.85, 0.02, 0.09, 0xfaf8f1, x, 0.08, 10.6, { noShadow: true });
+// Front 2-lane avenue & sidewalks along +Z edge
+addBox(board, 22.8, 0.05, 2.2, 0x576b75, 0, 0.05, 10.1, { noShadow: true });
+addBox(board, 22.8, 0.06, 0.46, 0xf7e2b8, 0, 0.06, 8.85, { noShadow: true });
+for (let x = -10; x <= 10; x += 1.75) {
+  addBox(board, 0.85, 0.02, 0.09, 0xfaf8f1, x, 0.08, 10.1, { noShadow: true });
 }
 
-// Left & right tunnel portals on the front avenue
-[-10.8, 10.8].forEach(tx => {
-  addBox(board, 2.0, 1.15, 2.4, 0xa1c8bc, tx, 0.58, 10.6);
-  addBox(board, 1.5, 0.78, 1.8, 0x263945, tx, 0.42, 10.6, { noShadow: true });
-  addSph(board, 0.26, 0x91bc89, tx - 0.35, 1.22, 10.2);
-  addSph(board, 0.24, 0x9ec692, tx + 0.35, 1.2, 10.9);
+// Tunnel portals on the front avenue
+[-10.3, 10.3].forEach(tx => {
+  addBox(board, 2.0, 1.18, 2.4, 0x7cd1c8, tx, 0.59, 10.1);
+  addBox(board, 2.08, 0.14, 2.48, 0x4fb3b0, tx, 1.18, 10.1);
+  addBox(board, 1.5, 0.78, 1.8, 0x263945, tx, 0.42, 10.1, { noShadow: true });
+  addSph(board, 0.26, 0x6bc47d, tx - 0.35, 1.32, 9.7);
+  addSph(board, 0.24, 0x8ad886, tx + 0.35, 1.3, 10.4);
 });
 
-// Animated AI Campus Shuttle Bus
+// Detailed Animated AI Campus Shuttle Bus (coral-red & sunny yellow trim)
 const bus = new THREE.Group();
-addBox(bus, 1.45, 0.55, 0.68, 0xe58975, 0, 0.42, 0);
-addBox(bus, 1.32, 0.22, 0.7, 0xfff1d8, 0, 0.54, 0);
-addBox(bus, 1.15, 0.16, 0.71, 0x31596c, 0.05, 0.54, 0, { noShadow: true });
-[-0.44, 0.44].forEach(wx => {
-  addCyl(bus, 0.14, 0.14, 0.76, 10, 0x2a3b42, wx, 0.18, 0, { rx: Math.PI / 2 });
+addBox(bus, 1.56, 0.56, 0.7, 0xff7a6b, 0, 0.42, 0);
+addBox(bus, 1.44, 0.24, 0.72, 0xfbbf24, 0, 0.56, 0);
+addBox(bus, 1.24, 0.16, 0.73, 0x2563eb, 0.05, 0.55, 0, { noShadow: true });
+addBox(bus, 0.55, 0.1, 0.42, 0xfaf8f1, -0.1, 0.72, 0);
+addBox(bus, 0.08, 0.12, 0.62, 0xfaf8f1, 0.79, 0.25, 0);
+[-0.46, 0.46].forEach(wx => {
+  addCyl(bus, 0.15, 0.15, 0.78, 12, 0x2a3b42, wx, 0.18, 0, { rx: Math.PI / 2 });
+  addCyl(bus, 0.08, 0.08, 0.8, 10, 0xfbbf24, wx, 0.18, 0, { rx: Math.PI / 2, noShadow: true });
 });
-addGlow(bus, 0.78, 0.36, 0.2, 0.9, 'warm');
-addGlow(bus, 0.78, 0.36, -0.2, 0.9, 'warm');
-bus.position.set(-4, 0.08, 10.2);
+addGlow(bus, 0.82, 0.36, 0.2, 0.9, 'warm');
+addGlow(bus, 0.82, 0.36, -0.2, 0.9, 'warm');
+bus.position.set(-4, 0.08, 9.7);
 board.add(bus);
 
-// Warm sand walkways connecting central plaza to outer zones
-addBox(board, 17.6, 0.05, 1.1, 0xf3e3c6, 0, 0.05, 0.2, { noShadow: true });
-addBox(board, 1.1, 0.05, 17.8, 0xf3e3c6, 0, 0.05, 0, { noShadow: true });
-addBox(board, 14.5, 0.05, 0.85, 0xf3e3c6, 0, 0.05, -5.8, { noShadow: true });
-addBox(board, 14.5, 0.05, 0.85, 0xf3e3c6, 0, 0.05, 5.6, { noShadow: true });
-addCyl(board, 3.0, 3.0, 0.06, 28, 0xfff1d8, 0, 0.055, 0, { noShadow: true });
-addCyl(board, 2.35, 2.35, 0.065, 28, 0x67bfbd, 0, 0.06, 0, { noShadow: true });
-addCyl(board, 1.95, 1.95, 0.07, 28, 0xf3e3c6, 0, 0.065, 0, { noShadow: true });
+// Warm cream-sand walkways connecting all zones
+addBox(board, 16.2, 0.05, 1.15, 0xf7e2b8, 0, 0.05, -0.2, { noShadow: true });
+addBox(board, 1.15, 0.05, 16.5, 0xf7e2b8, 0, 0.05, 0, { noShadow: true });
+addBox(board, 13.5, 0.05, 0.88, 0xf7e2b8, 0, 0.05, -5.6, { noShadow: true });
+addBox(board, 14.5, 0.05, 0.88, 0xf7e2b8, 0, 0.05, 5.2, { noShadow: true });
+addCyl(board, 3.05, 3.05, 0.06, 32, 0xfff8eb, 0, 0.055, 0.2, { noShadow: true });
+addCyl(board, 2.45, 2.45, 0.065, 32, 0x38bdf8, 0, 0.06, 0.2, { noShadow: true });
+addCyl(board, 2.05, 2.05, 0.07, 32, 0xf7e2b8, 0, 0.065, 0.2, { noShadow: true });
 
-// Campus entrance arch at front center (z = 8.9)
-addBox(board, 0.24, 1.15, 0.24, 0x31596c, -1.35, 0.62, 8.9);
-addBox(board, 0.24, 1.15, 0.24, 0x31596c, 1.35, 0.62, 8.9);
-addBox(board, 3.15, 0.36, 0.32, 0x67bfbd, 0, 1.24, 8.9);
-addBox(board, 2.3, 0.14, 0.35, 0xfff1d8, 0, 1.24, 8.9);
+// Campus entrance arch with festive colorful flags & striped ticket kiosk
+addBox(board, 0.26, 1.25, 0.26, 0x2563eb, -1.4, 0.65, 8.4);
+addBox(board, 0.26, 1.25, 0.26, 0x2563eb, 1.4, 0.65, 8.4);
+addBox(board, 3.3, 0.38, 0.34, 0x2ec4b6, 0, 1.32, 8.4);
+addBox(board, 2.5, 0.16, 0.37, 0xfbbf24, 0, 1.32, 8.4);
+addBox(board, 0.36, 0.12, 0.36, 0xff7a6b, -1.4, 1.54, 8.4);
+addBox(board, 0.36, 0.12, 0.36, 0xff7a6b, 1.4, 1.54, 8.4);
+[0xff7a6b, 0xfbbf24, 0x38bdf8, 0xf472b6, 0x34d399].forEach((fc, fi) => {
+  addSph(board, 0.13, fc, -1.0 + fi * 0.5, 1.72, 8.4);
+});
+// Entrance info kiosk with coral & yellow striped awning
+addBox(board, 0.95, 0.7, 0.68, 0xfff8eb, 2.55, 0.38, 7.9);
+addBox(board, 0.6, 0.28, 0.04, 0x38bdf8, 2.55, 0.48, 8.25, { noShadow: true });
+for (let s = -2; s <= 2; s++) {
+  addBox(board, 0.22, 0.14, 0.84, s % 2 === 0 ? 0xff7a6b : 0xfbbf24, 2.55 + s * 0.22, 0.79, 7.94);
+}
 
 // Perimeter miniature fence posts
-for (let p = -11.2; p <= 11.2; p += 1.6) {
-  addBox(board, 0.08, 0.32, 0.08, 0xfaf8f1, p, 0.2, -11.4, { noShadow: true });
-  addBox(board, 0.08, 0.32, 0.08, 0xfaf8f1, -11.4, 0.2, p, { noShadow: true });
-  addBox(board, 0.08, 0.32, 0.08, 0xfaf8f1, 11.4, 0.2, p, { noShadow: true });
+for (let p = -10.8; p <= 10.8; p += 1.6) {
+  addBox(board, 0.08, 0.32, 0.08, 0xfaf8f1, p, 0.2, -10.9, { noShadow: true });
+  addBox(board, 0.08, 0.32, 0.08, 0xfaf8f1, -10.9, 0.2, p, { noShadow: true });
+  addBox(board, 0.08, 0.32, 0.08, 0xfaf8f1, 10.9, 0.2, p, { noShadow: true });
 }
-addBox(board, 22.8, 0.05, 0.05, 0xfff1d8, 0, 0.28, -11.4, { noShadow: true });
-addBox(board, 0.05, 0.05, 22.8, 0xfff1d8, -11.4, 0.28, 0, { noShadow: true });
-addBox(board, 0.05, 0.05, 22.8, 0xfff1d8, 11.4, 0.28, 0, { noShadow: true });
+addBox(board, 21.8, 0.05, 0.05, 0xfff1d8, 0, 0.28, -10.9, { noShadow: true });
+addBox(board, 0.05, 0.05, 21.8, 0xfff1d8, -10.9, 0.28, 0, { noShadow: true });
+addBox(board, 0.05, 0.05, 21.8, 0xfff1d8, 10.9, 0.28, 0, { noShadow: true });
 
-// Trees, benches & lampposts across the campus
+// Trees, flowerbeds, benches & lampposts across the campus
 [
-  [-10.2, -9.8, 1.1, 0], [-9.2, -10.3, 0.85, 1], [10.0, -9.7, 1.15, 2], [9.1, -10.4, 0.8, 0],
-  [-10.4, -3.2, 1.0, 1], [-10.3, 3.6, 1.1, 2], [10.4, -4.4, 0.95, 0], [10.3, 2.0, 1.1, 1],
-  [-10.2, 8.2, 0.9, 0], [9.8, 8.2, 1.05, 2], [3.2, -3.2, 0.82, 1], [-3.4, -3.1, 0.85, 2],
-  [3.1, 4.4, 0.8, 0], [-6.2, 3.1, 0.88, 1], [5.8, -3.2, 0.85, 2]
+  [-9.6, -9.4, 1.08, 0], [-8.6, -9.8, 0.84, 1], [9.4, -9.2, 1.1, 2], [8.5, -9.9, 0.8, 0],
+  [-9.8, -3.2, 1.0, 1], [-9.7, 3.2, 1.08, 2], [9.8, -3.6, 0.95, 0], [9.7, 2.4, 1.05, 1],
+  [-9.5, 7.6, 0.9, 0], [9.4, 7.6, 1.02, 2], [2.9, -2.8, 0.82, 1], [-3.1, -2.8, 0.85, 2],
+  [2.7, 3.6, 0.78, 0], [-5.2, 2.5, 0.86, 1], [5.0, -2.8, 0.84, 2]
 ].forEach(([x, z, s, t]) => addTree(board, x, z, s, t));
 
-addBench(board, -2.5, 1.9, 0.4, true);
-addBench(board, 2.5, 1.9, -0.4, true);
-addBench(board, -2.5, -2.1, -0.4, false);
-addBench(board, 2.5, 8.6, 0, true);
-addBench(board, -2.8, 8.6, 0, false);
+[[-1.9, 3.3, 0], [1.9, 3.3, 0], [-1.9, -3.1, 0], [1.9, -3.1, 0], [-3.8, 8.1, 0], [4.1, 8.1, 0]]
+  .forEach(([x, z, ry]) => addFlowerbed(board, x, z, ry));
 
-[[-2.8, 2.8], [2.8, 2.8], [-2.8, -2.8], [2.8, -2.8], [-6.4, -0.6], [6.4, -0.6], [-4.8, 8.5], [4.8, 8.5]]
+addBench(board, -2.4, 1.9, 0.4, true);
+addBench(board, 2.4, 1.9, -0.4, true);
+addBench(board, -2.4, -2.0, -0.4, false);
+addBench(board, -2.5, 8.1, 0, true);
+
+[[-2.8, 2.8], [2.8, 2.8], [-2.8, -2.8], [2.8, -2.8], [-5.6, -0.5], [5.6, -0.5], [-4.5, 8.1], [4.5, 8.1]]
   .forEach(([x, z]) => addLamp(board, x, z));
 
 // Animated miniature campus visitors
@@ -1573,241 +1701,307 @@ for (let w = 0; w < 14; w++) {
   addCyl(wg, 0.08, 0.1, 0.26, 8, c, 0, 0.16, 0);
   addSph(wg, 0.085, 0xf8eaca, 0, 0.35, 0);
   const path = w % 2 === 0 ? 'x' : 'z';
-  const offset = ((w * 1.7) % 10) - 5;
-  const lane = ((w % 3) - 1) * 0.35;
+  const lane = ((w % 3) - 1) * 0.32;
   board.add(wg);
-  walkers.push({ g: wg, path, offset, lane, speed: 0.45 + (w % 4) * 0.12, phase: w * 1.1 });
+  walkers.push({ g: wg, path, lane, speed: 0.45 + (w % 4) * 0.12, phase: w * 1.1 });
 }
 
-/* ---------- 11 AI Zone Pavilions ---------- */
+/* ---------- 11 Refined AI Zone Pavilions (Sunnyland Miniature Style) ---------- */
 const animHooks = [];
 const zoneGroups = [];
 
 function padBase(g, r, c) {
-  addCyl(g, r, r + 0.15, 0.18, 24, 0xfff1d8, 0, 0.09, 0);
-  addCyl(g, r - 0.18, r - 0.18, 0.2, 24, c, 0, 0.11, 0);
+  addCyl(g, r, r + 0.14, 0.16, 28, 0xfff1d8, 0, 0.08, 0);
+  addCyl(g, r - 0.16, r - 0.16, 0.19, 28, c, 0, 0.1, 0);
 }
 
 const BUILD_ZONE = [
-  // 01 AI 世界入口：中央科技紀念塔與環繞知識光球
+  // 01 AI 世界入口：繽紛彩虹天體儀與水舞噴泉
   g => {
-    addCyl(g, 1.35, 1.55, 0.28, 12, 0xfff1d8, 0, 0.18, 0);
-    addCyl(g, 0.85, 1.05, 0.24, 12, 0x67bfbd, 0, 0.38, 0);
-    const crystal = addMesh(g, new THREE.OctahedronGeometry(0.62, 0), 0x72c4d1, 0, 1.45, 0, { e: 0.22, r: 0.35 });
-    const ring = new THREE.Group();
-    ring.position.y = 1.45;
-    addMesh(ring, new THREE.TorusGeometry(1.42, 0.045, 8, 36), 0xe7bd64, 0, 0, 0, { rx: Math.PI / 2 });
+    addCyl(g, 1.55, 1.72, 0.2, 24, 0xfff8eb, 0, 0.12, 0);
+    addCyl(g, 1.32, 1.32, 0.12, 24, 0x38bdf8, 0, 0.22, 0, { noShadow: true });
+    addCyl(g, 0.72, 0.92, 0.3, 16, 0xfbbf24, 0, 0.36, 0);
+    addCyl(g, 0.42, 0.52, 0.36, 12, 0x2ec4b6, 0, 0.65, 0);
+    const crystal = addMesh(g, new THREE.OctahedronGeometry(0.52, 0), 0x38bdf8, 0, 1.58, 0, { e: 0.3, r: 0.3 });
+    const ringA = new THREE.Group();
+    ringA.position.y = 1.58;
+    addMesh(ringA, new THREE.TorusGeometry(1.38, 0.05, 8, 40), 0xfbbf24, 0, 0, 0, { rx: Math.PI / 2 });
+    const orbCols = [0xff7a6b, 0xfbbf24, 0x34d399, 0x38bdf8, 0xa78bfa, 0xf472b6];
     for (let k = 0; k < 6; k++) {
       const a = (k / 6) * Math.PI * 2;
-      addSph(ring, 0.12, k % 2 ? 0xe58975 : 0x67bfbd, Math.cos(a) * 1.42, 0, Math.sin(a) * 1.42);
+      addSph(ringA, 0.13, orbCols[k], Math.cos(a) * 1.38, 0, Math.sin(a) * 1.38);
     }
-    g.add(ring);
-    addGlow(g, 0, 1.45, 0, 2.8, 'cyan');
+    const ringB = addMesh(g, new THREE.TorusGeometry(0.95, 0.036, 8, 32), 0xf472b6, 0, 1.58, 0, { rx: 0.9 });
+    g.add(ringA);
+    const jets = [];
+    for (let j = 0; j < 8; j++) {
+      const a = (j / 8) * Math.PI * 2;
+      const drop = addSph(g, 0.085, 0x7dd3fc, Math.cos(a) * 0.95, 0.38, Math.sin(a) * 0.95, { basic: true, noShadow: true });
+      jets.push({ drop, a, phase: j * 0.8 });
+    }
+    addGlow(g, 0, 1.58, 0, 3.0, 'cyan');
     animHooks.push(t => {
       crystal.rotation.y = t * 0.9;
-      crystal.position.y = 1.45 + Math.sin(t * 2.1) * 0.12;
-      ring.rotation.y = -t * 0.55;
+      crystal.position.y = 1.58 + Math.sin(t * 2.1) * 0.1;
+      ringA.rotation.y = -t * 0.55;
+      ringB.rotation.z = t * 0.7;
+      jets.forEach(j => {
+        const h = Math.abs(Math.sin(t * 2.6 + j.phase));
+        j.drop.position.y = 0.28 + h * 0.52;
+      });
     });
   },
-  // 02 雲端 AI 島：晴空資料中心與旋轉雷達＋雲朵
+  // 02 雲端 AI 島：晴空藍與暖黃資料中心＋高架雲軌與彩雲
   g => {
-    padBase(g, 2.1, 0x72c4d1);
-    [[-0.75, 0.25, 1.25], [0.05, -0.45, 1.55], [0.8, 0.3, 1.15]].forEach(([x, z, h]) => {
-      addBox(g, 0.56, h, 0.56, 0xfff1d8, x, 0.2 + h / 2, z);
-      addBox(g, 0.6, 0.12, 0.6, 0x67bfbd, x, 0.2 + h + 0.05, z);
-      addBox(g, 0.4, 0.07, 0.03, 0x67bfbd, x, 0.38 + h * 0.5, z + 0.29, { basic: true });
+    padBase(g, 2.05, 0x38bdf8);
+    [[-0.72, 0.28, 1.18, 0x60a5fa], [0.04, -0.45, 1.55, 0x38bdf8], [0.76, 0.3, 1.08, 0x2ec4b6]].forEach(([x, z, h, rc]) => {
+      addBox(g, 0.56, h, 0.56, 0xfff8eb, x, 0.2 + h / 2, z);
+      addBox(g, 0.62, 0.14, 0.62, rc, x, 0.2 + h + 0.05, z);
+      addWinGrid(g, x, 0.35 + h * 0.45, z + 0.29, 2, 3, 0.18, 0.22, 0.11, 0.11, 0x38bdf8, true);
     });
+    addMesh(g, new THREE.TorusGeometry(1.58, 0.055, 8, 40), 0x0284c7, 0, 1.15, 0, { rx: Math.PI / 2 });
+    for (let p = 0; p < 6; p++) {
+      const a = (p / 6) * Math.PI * 2;
+      addCyl(g, 0.04, 0.05, 0.96, 6, p % 2 ? 0xff7a6b : 0xfbbf24, Math.cos(a) * 1.58, 0.66, Math.sin(a) * 1.58);
+    }
+    const pod = addBox(g, 0.36, 0.22, 0.24, 0xfbbf24, 1.58, 1.25, 0);
     const dish = new THREE.Group();
-    dish.position.set(0.05, 1.9, -0.45);
-    addCyl(dish, 0.07, 0.09, 0.35, 8, 0x31596c, 0, 0.15, 0);
-    addCone(dish, 0.42, 0.22, 12, 0xe7bd64, 0, 0.42, 0, { rx: 0.9 });
+    dish.position.set(0.04, 1.92, -0.45);
+    addCyl(dish, 0.06, 0.08, 0.36, 8, 0x1e3a5f, 0, 0.15, 0);
+    addCone(dish, 0.42, 0.22, 14, 0xfbbf24, 0, 0.42, 0, { rx: 0.9 });
     g.add(dish);
     const clouds = new THREE.Group();
-    clouds.position.set(0, 2.55, 0.15);
-    [[0, 0, 0, 0.5], [0.48, -0.1, 0.08, 0.38], [-0.46, -0.12, -0.08, 0.4], [0.15, 0.22, -0.1, 0.34]]
+    clouds.position.set(0, 2.58, 0.15);
+    [[0, 0, 0, 0.46], [0.46, -0.1, 0.08, 0.35], [-0.45, -0.12, -0.08, 0.37], [0.15, 0.22, -0.1, 0.32]]
       .forEach(([x, y, z, r]) => addSph(clouds, r, 0xffffff, x, y, z));
     g.add(clouds);
-    addGlow(g, 0.05, 1.55, -0.45, 2.4, 'cyan');
+    addGlow(g, 0.04, 1.55, -0.45, 2.4, 'cyan');
     animHooks.push(t => {
-      dish.rotation.y = t * 0.9;
-      clouds.position.y = 2.55 + Math.sin(t * 1.4) * 0.12;
+      dish.rotation.y = t * 0.95;
+      clouds.position.y = 2.58 + Math.sin(t * 1.4) * 0.12;
+      const a = t * 1.15;
+      pod.position.set(Math.cos(a) * 1.58, 1.25, Math.sin(a) * 1.58);
+      pod.rotation.y = -a;
     });
   },
-  // 03 地端 AI 島：企業安全機房、屋頂散熱扇與 GPU 機櫃
+  // 03 地端 AI 島：珊瑚橘企業安全機房＋金黃屋頂飾條＋雙渦輪＋發光 GPU 機櫃
   g => {
-    padBase(g, 2.15, 0xe58975);
-    addBox(g, 1.95, 1.15, 1.5, 0xfff1d8, -0.15, 0.78, 0);
-    addBox(g, 2.15, 0.18, 1.7, 0x31596c, -0.15, 1.42, 0);
-    addBox(g, 0.55, 0.45, 0.2, 0xe58975, -0.15, 1.62, 0.2);
-    // GPU rack unit beside building
-    addBox(g, 0.68, 1.35, 0.65, 0x31596c, 1.15, 0.88, 0.3);
-    [0.55, 0.82, 1.09, 1.34].forEach(y => {
-      addBox(g, 0.46, 0.06, 0.03, 0x67bfbd, 1.15, y, 0.64, { basic: true });
+    padBase(g, 2.1, 0xff7a6b);
+    addBox(g, 1.88, 1.16, 1.42, 0xffe5d9, -0.18, 0.78, 0);
+    addBox(g, 2.06, 0.18, 1.6, 0xff7a6b, -0.18, 1.42, 0);
+    addBox(g, 0.85, 0.12, 0.32, 0xfbbf24, -0.18, 0.26, 0.84);
+    addBox(g, 0.56, 0.62, 0.06, 0x1e3a5f, -0.18, 0.58, 0.72);
+    addBox(g, 0.72, 0.12, 0.32, 0x2ec4b6, -0.18, 0.96, 0.82);
+    addWinGrid(g, -0.78, 0.85, 0.72, 2, 2, 0.2, 0.24, 0.12, 0.14, 0xfde047, true);
+    const fans = [];
+    [-0.65, 0.25].forEach(fx => {
+      addCyl(g, 0.34, 0.38, 0.14, 14, 0x2ec4b6, fx, 1.56, -0.2);
+      const fan = new THREE.Group();
+      fan.position.set(fx, 1.65, -0.2);
+      addBox(fan, 0.54, 0.04, 0.09, 0xfbbf24, 0, 0, 0);
+      addBox(fan, 0.09, 0.04, 0.54, 0xfbbf24, 0, 0, 0);
+      g.add(fan);
+      fans.push(fan);
     });
-    const fan = new THREE.Group();
-    fan.position.set(-0.55, 1.56, -0.25);
-    addCyl(fan, 0.36, 0.36, 0.08, 12, 0x67bfbd, 0, 0, 0);
-    addBox(fan, 0.58, 0.04, 0.1, 0xfff1d8, 0, 0.06, 0);
-    addBox(fan, 0.1, 0.04, 0.58, 0xfff1d8, 0, 0.06, 0);
-    g.add(fan);
-    addGlow(g, 1.15, 0.95, 0.55, 2.0, 'cyan');
-    addGlow(g, -0.15, 0.85, 0.8, 1.8, 'warm');
-    animHooks.push(t => { fan.rotation.y = t * 3.8; });
+    addBox(g, 0.72, 1.36, 0.68, 0x1e3a5f, 1.08, 0.88, 0.25);
+    addBox(g, 0.78, 0.1, 0.74, 0xfbbf24, 1.08, 1.58, 0.25);
+    [0.45, 0.68, 0.91, 1.14, 1.37].forEach(y => {
+      addBox(g, 0.5, 0.06, 0.04, 0x22d3ee, 1.08, y, 0.6, { basic: true });
+    });
+    addGlow(g, 1.08, 0.95, 0.55, 2.0, 'cyan');
+    addGlow(g, -0.18, 0.85, 0.8, 1.8, 'warm');
+    animHooks.push(t => { fans.forEach((f, i) => { f.rotation.y = t * (3.8 + i * 0.6); }); });
   },
-  // 04 AI 軟體工具島：旋轉應用程式旋轉木馬亭
+  // 04 AI 軟體工具島：彩虹馬卡龍 12 片旋轉木馬亭
   g => {
-    padBase(g, 1.95, 0xe7bd64);
-    addCyl(g, 0.22, 0.3, 1.5, 10, 0xfff1d8, 0, 0.95, 0);
+    padBase(g, 2.0, 0xfbbf24);
+    addCyl(g, 1.45, 1.55, 0.16, 24, 0xf472b6, 0, 0.24, 0);
+    addCyl(g, 0.26, 0.34, 1.55, 12, 0xfff8eb, 0, 1.02, 0);
     const carousel = new THREE.Group();
-    carousel.position.y = 1.65;
-    addCone(carousel, 1.35, 0.55, 12, 0xe58975, 0, 0.35, 0);
-    addCone(carousel, 1.02, 0.57, 12, 0xfff1d8, 0, 0.36, 0, { noShadow: true });
-    const cols = [0x67bfbd, 0xe58975, 0x31596c, 0xe7bd64];
-    for (let k = 0; k < 4; k++) {
-      const a = (k / 4) * Math.PI * 2;
-      const wx = Math.cos(a) * 0.98, wz = Math.sin(a) * 0.98;
+    carousel.position.y = 1.72;
+    const canopyCols = [0xff7a6b, 0xfff8eb, 0x38bdf8, 0xfbbf24, 0xf472b6, 0x34d399];
+    for (let k = 0; k < 12; k++) {
+      const a = (k / 12) * Math.PI * 2;
+      const w = addCone(carousel, 0.42, 0.58, 4, canopyCols[k % canopyCols.length], Math.cos(a) * 0.85, 0.35, Math.sin(a) * 0.85);
+      w.rotation.y = -a;
+    }
+    addCyl(carousel, 1.38, 1.38, 0.14, 24, 0xfbbf24, 0, 0.08, 0);
+    addSph(carousel, 0.17, 0xff7a6b, 0, 0.72, 0);
+    const cols = [0x38bdf8, 0xff7a6b, 0xa78bfa, 0xfbbf24, 0x34d399, 0xf472b6];
+    const pods = [];
+    for (let k = 0; k < 6; k++) {
+      const a = (k / 6) * Math.PI * 2;
+      addCyl(carousel, 0.025, 0.025, 1.18, 6, 0xfbbf24, Math.cos(a) * 1.04, -0.52, Math.sin(a) * 1.04);
       const winCard = new THREE.Group();
-      winCard.position.set(wx, -0.48, wz);
+      winCard.position.set(Math.cos(a) * 1.04, -0.75, Math.sin(a) * 1.04);
       winCard.rotation.y = -a + Math.PI / 2;
-      addBox(winCard, 0.68, 0.48, 0.07, 0xfff1d8, 0, 0, 0);
-      addBox(winCard, 0.68, 0.11, 0.08, cols[k], 0, 0.19, 0);
-      addCyl(winCard, 0.025, 0.025, 0.55, 6, 0xe7bd64, 0, 0.45, 0);
+      addBox(winCard, 0.56, 0.4, 0.07, 0xfff8eb, 0, 0, 0);
+      addBox(winCard, 0.56, 0.1, 0.08, cols[k], 0, 0.15, 0);
+      addBox(winCard, 0.36, 0.05, 0.08, 0x7cd1c8, -0.05, -0.04, 0);
       carousel.add(winCard);
+      pods.push({ winCard, phase: k * 1.05 });
     }
     g.add(carousel);
-    addGlow(g, 0, 1.4, 0, 2.0, 'warm');
-    animHooks.push(t => { carousel.rotation.y = t * 0.65; });
-  },
-  // 05 AI 硬體設備島：巨型 NPU 晶片台與工作站筆電
-  g => {
-    padBase(g, 2.05, 0x31596c);
-    addBox(g, 1.55, 0.22, 1.55, 0x31596c, 0.15, 0.32, 0);
-    for (let i = -2; i <= 2; i++) {
-      addBox(g, 0.12, 0.08, 1.82, 0xe7bd64, 0.15 + i * 0.28, 0.26, 0);
-      addBox(g, 1.82, 0.08, 0.12, 0xe7bd64, 0.15, 0.26, i * 0.28);
-    }
-    const core = addBox(g, 0.85, 0.2, 0.85, 0x67bfbd, 0.15, 0.52, 0, { e: 0.25 });
-    // Mini AI Workstation laptop
-    addBox(g, 0.92, 0.08, 0.68, 0xfff1d8, -0.78, 0.28, 0.65);
-    addBox(g, 0.92, 0.62, 0.06, 0x31596c, -0.78, 0.6, 0.32, { rx: -0.25 });
-    addBox(g, 0.78, 0.48, 0.03, 0x67bfbd, -0.78, 0.6, 0.35, { rx: -0.25, basic: true });
-    addGlow(g, 0.15, 0.75, 0, 2.2, 'cyan');
-    animHooks.push(t => { core.position.y = 0.52 + Math.sin(t * 2.2) * 0.05; });
-  },
-  // 06 AI 模型島：7B → 14B → 32B → 70B 階梯塔與環繞 Token
-  g => {
-    padBase(g, 2.0, 0x418f96);
-    const specs = [
-      [-0.95, 0.42, 0.55, 0xa1c8bc],
-      [-0.35, 0.48, 0.9, 0x67bfbd],
-      [0.28, 0.52, 1.3, 0x418f96],
-      [0.95, 0.58, 1.75, 0x31596c]
-    ];
-    specs.forEach(([x, w, h, c]) => {
-      addBox(g, w, h, w, c, x, 0.2 + h / 2, 0);
-      addBox(g, w + 0.06, 0.08, w + 0.06, 0xfff1d8, x, 0.2 + h + 0.04, 0);
+    addGlow(g, 0, 1.45, 0, 2.2, 'warm');
+    animHooks.push(t => {
+      carousel.rotation.y = t * 0.65;
+      pods.forEach(p => { p.winCard.position.y = -0.78 + Math.sin(t * 2.2 + p.phase) * 0.14; });
     });
+  },
+  // 05 AI 硬體設備島：寶藍黃金 NPU 晶片台＋青藍筆電＋珊瑚橘 Edge Box
+  g => {
+    padBase(g, 2.05, 0x2563eb);
+    addBox(g, 1.48, 0.22, 1.48, 0x1e3a8a, 0.18, 0.32, -0.05);
+    for (let i = -3; i <= 3; i++) {
+      addBox(g, 0.08, 0.07, 1.76, 0xfbbf24, 0.18 + i * 0.2, 0.25, -0.05);
+      addBox(g, 1.76, 0.07, 0.08, 0xfbbf24, 0.18, 0.25, -0.05 + i * 0.2);
+    }
+    addBox(g, 1.05, 0.1, 1.05, 0x38bdf8, 0.18, 0.48, -0.05);
+    const core = addBox(g, 0.72, 0.18, 0.72, 0x22d3ee, 0.18, 0.62, -0.05, { e: 0.32 });
+    addBox(g, 0.92, 0.07, 0.66, 0xfff8eb, -0.78, 0.26, 0.72);
+    addBox(g, 0.74, 0.02, 0.32, 0x38bdf8, -0.78, 0.31, 0.64, { noShadow: true });
+    addBox(g, 0.92, 0.6, 0.05, 0x2563eb, -0.78, 0.56, 0.4, { rx: -0.25 });
+    addBox(g, 0.78, 0.46, 0.03, 0x22d3ee, -0.78, 0.56, 0.43, { rx: -0.25, basic: true });
+    addBox(g, 0.52, 0.34, 0.46, 0xff7a6b, 0.95, 0.38, 0.75);
+    addCyl(g, 0.025, 0.03, 0.45, 6, 0xfbbf24, 1.12, 0.72, 0.62);
+    addGlow(g, 0.18, 0.8, -0.05, 2.2, 'cyan');
+    animHooks.push(t => { core.position.y = 0.62 + Math.sin(t * 2.2) * 0.04; });
+  },
+  // 06 AI 模型島：漸層彩虹階梯塔（薄荷綠 → 天空藍 → 靛藍 → 紫羅蘭）
+  g => {
+    padBase(g, 2.0, 0x8b5cf6);
+    [[-0.9, 0.42, 0.58, 0x34d399], [-0.32, 0.46, 0.95, 0x38bdf8], [0.28, 0.5, 1.36, 0x6366f1], [0.92, 0.56, 1.8, 0x8b5cf6]].forEach(([x, w, h, c], idx) => {
+      addBox(g, w, h, w, c, x, 0.2 + h / 2, 0);
+      addBox(g, w + 0.06, 0.08, w + 0.06, 0xfbbf24, x, 0.2 + h + 0.04, 0);
+      addWinGrid(g, x, 0.25 + h * 0.5, w / 2 + 0.015, 2, idx + 1, 0.14, 0.25, 0.08, 0.12, 0xfef08a, true);
+    });
+    addBox(g, 1.85, 0.08, 0.18, 0xf7e2b8, 0, 0.62, 0);
     const tokens = new THREE.Group();
-    tokens.position.set(0.2, 2.35, 0);
-    for (let k = 0; k < 4; k++) {
-      const a = (k / 4) * Math.PI * 2;
-      addBox(tokens, 0.2, 0.2, 0.2, k % 2 ? 0xe7bd64 : 0xe58975, Math.cos(a) * 0.95, Math.sin(k) * 0.12, Math.sin(a) * 0.95);
+    tokens.position.set(0.25, 2.38, 0);
+    const tokCols = [0xff7a6b, 0xfbbf24, 0x34d399, 0x38bdf8, 0xf472b6];
+    for (let k = 0; k < 5; k++) {
+      const a = (k / 5) * Math.PI * 2;
+      addBox(tokens, 0.19, 0.19, 0.19, tokCols[k], Math.cos(a) * 0.95, Math.sin(k) * 0.12, Math.sin(a) * 0.95);
     }
     g.add(tokens);
-    addGlow(g, 0.95, 1.9, 0, 1.8, 'cyan');
+    addGlow(g, 0.92, 1.95, 0, 1.9, 'cyan');
     animHooks.push(t => { tokens.rotation.y = t * 0.9; });
   },
-  // 07 AI 知識管理島：RAG 圓頂知識館與漂浮文件頁
+  // 07 AI 知識管理島：玫瑰粉與薰衣草圓頂 RAG 圖書館
   g => {
-    padBase(g, 1.98, 0xe9a7b2);
-    addBox(g, 1.65, 1.0, 1.35, 0xfff1d8, 0, 0.7, -0.1);
-    addCyl(g, 0.75, 0.85, 0.4, 14, 0xe9a7b2, 0, 1.38, -0.1);
-    addSph(g, 0.55, 0xe58975, 0, 1.56, -0.1);
-    // Pillars
-    [-0.65, -0.22, 0.22, 0.65].forEach(x => addCyl(g, 0.07, 0.08, 0.95, 8, 0xf3e3c6, x, 0.68, 0.62));
+    padBase(g, 2.0, 0xf472b6);
+    addBox(g, 1.62, 0.16, 1.38, 0xf7e2b8, 0, 0.24, -0.05);
+    addBox(g, 1.48, 0.96, 1.22, 0xfff8eb, 0, 0.78, -0.1);
+    addCyl(g, 0.74, 0.84, 0.36, 16, 0xf472b6, 0, 1.42, -0.1);
+    addSph(g, 0.54, 0xfb7185, 0, 1.58, -0.1);
+    addCyl(g, 0.14, 0.18, 0.24, 10, 0xfbbf24, 0, 2.15, -0.1);
+    [-0.64, -0.32, 0, 0.32, 0.64].forEach(x => addCyl(g, 0.065, 0.075, 0.96, 8, 0xf7e2b8, x, 0.74, 0.56));
+    [0x38bdf8, 0xfbbf24, 0xff7a6b, 0xa78bfa].forEach((bc, b) => {
+      addBox(g, 0.14, 0.36, 0.18, bc, -0.42 + b * 0.28, 0.5, 0.44);
+    });
     const docs = new THREE.Group();
-    docs.position.set(0, 1.85, 0.75);
-    [0x67bfbd, 0xe7bd64, 0xe58975].forEach((c, idx) => {
-      const card = addBox(docs, 0.44, 0.32, 0.05, 0xffffff, (idx - 1) * 0.55, (idx % 2) * 0.2, 0, { ry: (idx - 1) * 0.3 });
+    docs.position.set(0, 1.88, 0.78);
+    [0x38bdf8, 0xfbbf24, 0xf472b6].forEach((c, idx) => {
+      const card = addBox(docs, 0.44, 0.32, 0.05, 0xffffff, (idx - 1) * 0.54, (idx % 2) * 0.18, 0, { ry: (idx - 1) * 0.3 });
       addBox(card, 0.32, 0.05, 0.06, c, 0, 0.08, 0);
+      addBox(card, 0.26, 0.03, 0.06, 0x7cd1c8, -0.02, -0.03, 0);
     });
     g.add(docs);
-    addGlow(g, 0, 0.85, 0.65, 2.0, 'warm');
-    animHooks.push(t => { docs.position.y = 1.85 + Math.sin(t * 1.7) * 0.1; });
+    addGlow(g, 0, 0.9, 0.65, 2.1, 'warm');
+    animHooks.push(t => { docs.position.y = 1.88 + Math.sin(t * 1.7) * 0.1; });
   },
-  // 08 雲端與地端比較島：雙塔與拱形混合雲橋樑
+  // 08 雲端與地端比較島：碧藍運河＋黃金拱橋＋天空藍雲端塔 vs 珊瑚橘地端塔
   g => {
-    padBase(g, 2.05, 0xbd936c);
-    // Cloud side (left)
-    addBox(g, 0.65, 1.2, 0.65, 0x67bfbd, -1.05, 0.8, 0);
-    addSph(g, 0.38, 0xffffff, -1.05, 1.65, 0);
-    // On-Prem side (right)
-    addBox(g, 0.72, 0.95, 0.72, 0xe58975, 1.05, 0.68, 0);
-    addBox(g, 0.78, 0.16, 0.78, 0x31596c, 1.05, 1.22, 0);
-    // Hybrid Arch Bridge
-    addMesh(g, new THREE.TorusGeometry(1.05, 0.08, 8, 28, Math.PI), 0xe7bd64, 0, 0.35, 0);
-    const shuttle = addSph(g, 0.15, 0xfff1d8, 0, 1.4, 0, { e: 0.3 });
+    padBase(g, 2.05, 0xf59e0b);
+    addBox(g, 0.78, 0.08, 3.3, 0x38bdf8, 0, 0.22, 0, { noShadow: true });
+    addBox(g, 0.66, 1.24, 0.66, 0x38bdf8, -1.05, 0.82, 0);
+    addWinGrid(g, -1.05, 0.9, 0.34, 2, 3, 0.2, 0.22, 0.1, 0.11, 0xfff8eb, true);
+    addSph(g, 0.36, 0xffffff, -1.05, 1.66, 0);
+    addBox(g, 0.72, 0.98, 0.72, 0xff7a6b, 1.05, 0.7, 0);
+    addBox(g, 0.78, 0.16, 0.78, 0x1e3a8a, 1.05, 1.24, 0);
+    addWinGrid(g, 1.05, 0.72, 0.37, 2, 2, 0.22, 0.24, 0.11, 0.12, 0xfde047, true);
+    addBox(g, 1.7, 0.1, 0.42, 0xf7e2b8, 0, 0.42, 0);
+    addMesh(g, new THREE.TorusGeometry(0.95, 0.065, 8, 28, Math.PI), 0xfbbf24, 0, 0.42, 0.18);
+    addMesh(g, new THREE.TorusGeometry(0.95, 0.065, 8, 28, Math.PI), 0xfbbf24, 0, 0.42, -0.18);
+    [-0.55, 0, 0.55].forEach(bx => addCyl(g, 0.02, 0.02, 0.7, 6, 0xfff8eb, bx, 0.78, 0));
+    const shuttle = addSph(g, 0.15, 0xf472b6, 0, 1.4, 0, { e: 0.35 });
     addGlow(g, 0, 1.2, 0, 2.0, 'warm');
     animHooks.push(t => {
-      const u = (Math.sin(t * 1.3) * 0.5 + 0.5) * Math.PI;
-      shuttle.position.set(Math.cos(u) * 1.05, 0.35 + Math.sin(u) * 1.05, 0);
+      const u = (Math.sin(t * 1.35) * 0.5 + 0.5) * Math.PI;
+      shuttle.position.set(Math.cos(u) * 0.95, 0.42 + Math.sin(u) * 0.95, 0);
     });
   },
-  // 09 企業 AI 應用島：微型智慧園區（工廠＋醫院＋大樓＋軌道列車）
+  // 09 企業 AI 應用島：繽紛微型智慧城（藍寶石大樓＋珊瑚紅工廠＋薄荷綠醫院＋黃藍雙節小火車）
   g => {
-    padBase(g, 2.25, 0x91bc89);
-    // Office tower
-    addBox(g, 0.55, 1.45, 0.55, 0x31596c, -0.85, 0.92, -0.45);
-    addBox(g, 0.6, 0.12, 0.6, 0x67bfbd, -0.85, 1.7, -0.45);
-    // Factory
-    addBox(g, 0.85, 0.68, 0.68, 0xe58975, 0.75, 0.54, -0.4);
-    addCyl(g, 0.1, 0.14, 0.95, 8, 0x31596c, 1.05, 0.95, -0.58);
-    // Hospital
-    addBox(g, 0.75, 0.62, 0.62, 0xfff1d8, -0.55, 0.51, 0.72);
-    addBox(g, 0.28, 0.08, 0.08, 0xe58975, -0.55, 0.88, 0.72);
-    addBox(g, 0.08, 0.08, 0.28, 0xe58975, -0.55, 0.88, 0.72);
-    // Rail track & moving mini train
-    addBox(g, 2.8, 0.06, 0.22, 0x31596c, 0, 0.23, 0.12);
-    const train = addBox(g, 0.55, 0.24, 0.2, 0xe7bd64, 0, 0.38, 0.12);
-    addGlow(g, -0.85, 1.3, -0.45, 1.9, 'warm');
-    animHooks.push(t => { train.position.x = Math.sin(t * 1.1) * 1.0; });
-  },
-  // 10 AI 實作實驗室：創客實驗屋與發光實驗槽
-  g => {
-    padBase(g, 1.95, 0x67bfbd);
-    addBox(g, 1.55, 0.14, 0.95, 0xf3e3c6, 0, 0.65, 0);
-    [[-0.65, -0.35], [0.65, -0.35], [-0.65, 0.35], [0.65, 0.35]].forEach(([x, z]) => {
-      addCyl(g, 0.06, 0.06, 0.48, 6, 0x31596c, x, 0.4, z);
-    });
-    // Terminal board
-    addBox(g, 1.15, 0.72, 0.08, 0x31596c, 0, 1.35, -0.52);
-    addBox(g, 0.98, 0.54, 0.04, 0x67bfbd, 0, 1.35, -0.47, { basic: true });
-    // Bubbling capsules
-    const b1 = addCyl(g, 0.16, 0.16, 0.45, 12, 0x67bfbd, -0.38, 0.95, 0.12, { t: 0.8 });
-    const b2 = addCyl(g, 0.16, 0.16, 0.45, 12, 0xe7bd64, 0.38, 0.95, 0.12, { t: 0.8 });
-    addGlow(g, 0, 1.35, -0.4, 2.2, 'cyan');
+    padBase(g, 2.18, 0x34d399);
+    addBox(g, 0.58, 1.48, 0.58, 0x2563eb, -0.82, 0.94, -0.45);
+    addBox(g, 0.64, 0.12, 0.64, 0x38bdf8, -0.82, 1.72, -0.45);
+    addWinGrid(g, -0.82, 0.95, -0.15, 2, 4, 0.18, 0.22, 0.1, 0.11, 0xfde047, true);
+    addBox(g, 0.88, 0.66, 0.68, 0xff7a6b, 0.75, 0.54, -0.4);
+    addBox(g, 0.88, 0.18, 0.3, 0xfbbf24, 0.75, 0.95, -0.55);
+    addCyl(g, 0.11, 0.15, 0.96, 10, 0x1e3a8a, 1.05, 0.96, -0.58);
+    addCyl(g, 0.12, 0.12, 0.12, 10, 0xfff8eb, 1.05, 1.26, -0.58);
+    const puff = addSph(g, 0.14, 0xffffff, 1.05, 1.65, -0.58, { t: 0.85, noShadow: true });
+    addBox(g, 0.78, 0.62, 0.62, 0xfff8eb, -0.55, 0.51, 0.72);
+    addBox(g, 0.28, 0.09, 0.09, 0xff5c5c, -0.55, 0.88, 0.72);
+    addBox(g, 0.09, 0.09, 0.28, 0xff5c5c, -0.55, 0.88, 0.72);
+    addBox(g, 2.75, 0.06, 0.24, 0x31596c, 0, 0.23, 0.14);
+    const train = new THREE.Group();
+    addBox(train, 0.44, 0.24, 0.2, 0xfbbf24, -0.24, 0.38, 0.14);
+    addBox(train, 0.44, 0.22, 0.2, 0x38bdf8, 0.26, 0.37, 0.14);
+    g.add(train);
+    addGlow(g, -0.82, 1.25, -0.45, 2.0, 'warm');
     animHooks.push(t => {
-      b1.position.y = 0.95 + Math.sin(t * 2.5) * 0.05;
-      b2.position.y = 0.95 + Math.cos(t * 2.5) * 0.05;
+      train.position.x = Math.sin(t * 1.15) * 0.85;
+      puff.position.y = 1.62 + ((t * 0.5) % 0.65);
+      puff.scale.setScalar(0.8 + ((t * 0.5) % 0.65));
     });
   },
-  // 11 AI 未來與學習行囊：燈塔領航與旋轉星環
+  // 10 AI 實作實驗室：六色彩虹關卡燈柱＋青碧實驗桌
   g => {
-    padBase(g, 1.95, 0xe7bd64);
-    addCyl(g, 0.36, 0.54, 1.75, 12, 0xfff1d8, -0.1, 1.05, 0);
-    addCyl(g, 0.44, 0.48, 0.24, 12, 0xe58975, -0.1, 1.55, 0);
-    addCyl(g, 0.32, 0.32, 0.36, 12, 0xf8eaca, -0.1, 2.08, 0, { basic: true });
-    addCone(g, 0.42, 0.38, 12, 0x31596c, -0.1, 2.42, 0);
+    padBase(g, 1.95, 0x2ec4b6);
+    addBox(g, 1.52, 0.14, 0.92, 0xf7e2b8, 0, 0.64, 0);
+    [[-0.62, -0.34], [0.62, -0.34], [-0.62, 0.34], [0.62, 0.34]].forEach(([x, z]) => {
+      addCyl(g, 0.06, 0.06, 0.46, 6, 0x2563eb, x, 0.39, z);
+    });
+    addBox(g, 1.14, 0.72, 0.08, 0x1e3a8a, 0, 1.34, -0.48);
+    addBox(g, 0.96, 0.54, 0.04, 0x22d3ee, 0, 1.34, -0.43, { basic: true });
+    addBox(g, 0.66, 0.05, 0.24, 0xfff8eb, 0, 0.74, 0.18);
+    const lanCols = [0xff7a6b, 0xfbbf24, 0x34d399, 0x38bdf8, 0xa78bfa, 0xf472b6];
+    for (let k = 0; k < 6; k++) {
+      const a = -0.7 + k * 0.28;
+      addCyl(g, 0.06, 0.07, 0.28, 8, 0x31596c, Math.sin(a) * 1.35, 0.32, 0.68 + Math.cos(a) * 0.45);
+      addSph(g, 0.085, lanCols[k], Math.sin(a) * 1.35, 0.5, 0.68 + Math.cos(a) * 0.45, { basic: true });
+    }
+    const b1 = addCyl(g, 0.15, 0.15, 0.46, 12, 0x38bdf8, -0.42, 0.94, 0.06, { t: 0.85 });
+    const b2 = addCyl(g, 0.15, 0.15, 0.46, 12, 0xf472b6, 0.42, 0.94, 0.06, { t: 0.85 });
+    addGlow(g, 0, 1.34, -0.36, 2.2, 'cyan');
+    animHooks.push(t => {
+      b1.position.y = 0.94 + Math.sin(t * 2.5) * 0.05;
+      b2.position.y = 0.94 + Math.cos(t * 2.5) * 0.05;
+    });
+  },
+  // 11 AI 未來與學習行囊：珊瑚紅白條紋燈塔＋雙色衛星環＋金黃行囊寶箱
+  g => {
+    padBase(g, 1.95, 0xfbbf24);
+    addCyl(g, 0.48, 0.58, 0.45, 14, 0xfff8eb, -0.1, 0.4, 0);
+    addCyl(g, 0.42, 0.48, 0.45, 14, 0xff7a6b, -0.1, 0.85, 0);
+    addCyl(g, 0.36, 0.42, 0.45, 14, 0xfff8eb, -0.1, 1.3, 0);
+    addCyl(g, 0.48, 0.48, 0.1, 14, 0x2563eb, -0.1, 1.58, 0);
+    addCyl(g, 0.3, 0.3, 0.36, 12, 0xfde047, -0.1, 1.82, 0, { basic: true });
+    addCone(g, 0.42, 0.38, 12, 0x2ec4b6, -0.1, 2.18, 0);
     const orbit = new THREE.Group();
-    orbit.position.set(-0.1, 1.65, 0);
-    orbit.rotation.x = 0.55;
-    addMesh(orbit, new THREE.TorusGeometry(1.12, 0.04, 8, 36), 0x67bfbd, 0, 0, 0, { rx: Math.PI / 2 });
-    addSph(orbit, 0.14, 0xe7bd64, 1.12, 0, 0);
+    orbit.position.set(-0.1, 1.48, 0);
+    orbit.rotation.x = 0.52;
+    addMesh(orbit, new THREE.TorusGeometry(1.12, 0.04, 8, 36), 0x38bdf8, 0, 0, 0, { rx: Math.PI / 2 });
+    addSph(orbit, 0.14, 0xfbbf24, 1.12, 0, 0);
+    addSph(orbit, 0.12, 0xf472b6, -1.12, 0, 0);
     g.add(orbit);
-    // Learning trunk
-    addBox(g, 0.72, 0.38, 0.46, 0xbd936c, 0.9, 0.4, 0.45);
-    addBox(g, 0.74, 0.1, 0.48, 0xe7bd64, 0.9, 0.62, 0.45);
-    addGlow(g, -0.1, 2.08, 0, 2.6, 'warm');
+    addBox(g, 0.72, 0.38, 0.46, 0xd97706, 0.88, 0.4, 0.44);
+    addBox(g, 0.74, 0.1, 0.48, 0xfbbf24, 0.88, 0.62, 0.44);
+    addBox(g, 0.08, 0.4, 0.48, 0x2563eb, 0.68, 0.42, 0.44);
+    addBox(g, 0.08, 0.4, 0.48, 0x2563eb, 1.08, 0.42, 0.44);
+    addGlow(g, -0.1, 1.82, 0, 2.8, 'warm');
     animHooks.push(t => { orbit.rotation.y = t * 0.85; });
   }
 ];
@@ -1829,19 +2023,20 @@ ZONES.forEach((z, idx) => {
   });
   pinsEl.appendChild(pin);
 
-  zoneGroups.push({ ...z, idx, g, pin, anchor: new THREE.Vector3(z.pos[0], 2.75, z.pos[1]) });
+  zoneGroups.push({ ...z, idx, g, pin, anchor: new THREE.Vector3(z.pos[0], 2.55, z.pos[1]) });
 });
 
-/* ---------- Camera & Smooth Navigation ---------- */
+/* ---------- Camera, Responsive Framing & Navigation ---------- */
 const isPortrait = () => mapEl.clientWidth / Math.max(1, mapEl.clientHeight) < 0.95;
-const homeZoom = () => (isPortrait() ? 0.82 : 1.12);
-const cur = { tx: 0, ty: 0.4, tz: 0.3, th: 0.72, ph: 0.96, zoom: homeZoom() };
+const homeZoom = () => (isPortrait() ? 0.92 : 1.08);
+const cur = { tx: 0, ty: 0.35, tz: 0.2, th: 0.72, ph: 0.96, zoom: homeZoom() };
 const goal = { ...cur };
 let flying = false;
 let activeIdx = null;
 let selectedNode = 0;
 let currentFilter = '全部';
 let pinsVisible = true;
+let dragPanMode = false;
 let motionPaused = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const visited = new Set();
 
@@ -1849,7 +2044,8 @@ function updateCameraProjection() {
   const w = Math.max(1, mapEl.clientWidth);
   const h = Math.max(1, mapEl.clientHeight);
   const aspect = w / h;
-  const frustum = 14.2;
+  // Fit full 23.8x23.8 diorama width cleanly even on narrow portrait phones
+  const frustum = aspect < 1 ? 15.2 / Math.max(0.65, aspect) : 14.5;
   camera.left = -frustum * aspect;
   camera.right = frustum * aspect;
   camera.top = frustum;
@@ -1859,8 +2055,8 @@ function updateCameraProjection() {
   renderer.setSize(w, h, false);
 }
 
-const ro = new ResizeObserver(() => updateCameraProjection());
-ro.observe(mapEl);
+new ResizeObserver(() => updateCameraProjection()).observe(mapEl);
+window.addEventListener('orientationchange', () => setTimeout(updateCameraProjection, 150));
 updateCameraProjection();
 
 /* ---------- UI & Knowledge Panel Logic ---------- */
@@ -1943,7 +2139,7 @@ sideScroll.addEventListener('click', e => {
   const zoneBtn = e.target.closest('[data-zone]');
   if (zoneBtn) { focusZone(+zoneBtn.dataset.zone); return; }
   const nodeBtn = e.target.closest('[data-node]');
-  if (nodeBtn) { selectedNode = +nodeBtn.dataset.node; renderSidebar(); return; }
+  if (nodeBtn) { selectedNode = +nodeBtn.dataset.node; audio.playClick(); renderSidebar(); return; }
   if (e.target.closest('#back-list')) { focusZone(null); return; }
   if (e.target.closest('#prev-zone')) { focusZone((activeIdx - 1 + ZONES.length) % ZONES.length); return; }
   if (e.target.closest('#next-zone')) { focusZone((activeIdx + 1) % ZONES.length); return; }
@@ -1959,24 +2155,32 @@ function syncPinStates() {
 function focusZone(idx) {
   activeIdx = idx;
   selectedNode = 0;
+  audio.playClick();
   if (idx === null) {
-    Object.assign(goal, { tx: 0, ty: 0.4, tz: 0.3, th: 0.72, ph: 0.96, zoom: homeZoom() });
+    Object.assign(goal, { tx: 0, ty: 0.35, tz: 0.2, th: 0.72, ph: 0.96, zoom: homeZoom() });
   } else {
     visited.add(idx);
     const z = ZONES[idx];
-    Object.assign(goal, { tx: z.pos[0], ty: 0.8, tz: z.pos[1], th: 0.68, ph: 0.92, zoom: isPortrait() ? 2.1 : 2.55 });
+    Object.assign(goal, { tx: z.pos[0], ty: 0.8, tz: z.pos[1], th: 0.68, ph: 0.92, zoom: isPortrait() ? 2.1 : 2.5 });
   }
   flying = true;
   syncPinStates();
   renderSidebar();
 }
 
-/* ---------- Pointer, Wheel, Pinch & Keyboard Controls ---------- */
+/* ---------- Pointer, Pan/Rotate Mode, D-Pad & Keyboard Controls ---------- */
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const raycaster = new THREE.Raycaster();
 const ndc = new THREE.Vector2();
 const ptrs = new Map();
-let downAt = null, moved = false, pinchDist0 = 0, panMode = false;
+let downAt = null, moved = false, pinchDist0 = 0, panGesture = false;
+
+function panByScreenDelta(dx, dy) {
+  const s = 0.032 / cur.zoom;
+  const cosT = Math.cos(cur.th), sinT = Math.sin(cur.th);
+  cur.tx = clamp(cur.tx - (dx * cosT + dy * sinT) * s, -11.5, 11.5);
+  cur.tz = clamp(cur.tz - (-dx * sinT + dy * cosT) * s, -11.5, 11.5);
+}
 
 function pickZone(clientX, clientY) {
   const rect = sceneHost.getBoundingClientRect();
@@ -1997,7 +2201,7 @@ sceneHost.addEventListener('pointerdown', e => {
   if (ptrs.size === 1) {
     downAt = { x: e.clientX, y: e.clientY };
     moved = false;
-    panMode = e.button === 2 || e.shiftKey;
+    panGesture = dragPanMode || e.button === 2 || e.shiftKey;
     sceneHost.classList.add('drag');
   } else if (ptrs.size === 2) {
     moved = true;
@@ -2017,12 +2221,8 @@ sceneHost.addEventListener('pointermove', e => {
   if (ptrs.size === 1) {
     if (Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y) > 5) moved = true;
     if (moved) {
-      if (panMode) {
-        const s = 0.032 / cur.zoom;
-        const cosT = Math.cos(cur.th), sinT = Math.sin(cur.th);
-        cur.tx = clamp(cur.tx - (dx * cosT + dy * sinT) * s, -12, 12);
-        cur.tz = clamp(cur.tz - (-dx * sinT + dy * cosT) * s, -12, 12);
-      } else {
+      if (panGesture) panByScreenDelta(dx, dy);
+      else {
         cur.th -= dx * 0.0065;
         cur.ph = clamp(cur.ph - dy * 0.0055, 0.25, 1.32);
       }
@@ -2040,12 +2240,12 @@ function releasePtr(e) {
   ptrs.delete(e.pointerId);
   if (ptrs.size === 0) {
     sceneHost.classList.remove('drag');
-    if (e.type === 'pointerup' && !moved && downAt && !panMode) {
+    if (e.type === 'pointerup' && !moved && downAt) {
       const idx = pickZone(e.clientX, e.clientY);
       if (idx !== null) focusZone(idx);
     }
     downAt = null;
-    panMode = false;
+    panGesture = false;
   }
 }
 sceneHost.addEventListener('pointerup', releasePtr);
@@ -2055,6 +2255,49 @@ sceneHost.addEventListener('wheel', e => {
   flying = false;
   cur.zoom = clamp(cur.zoom * Math.exp(-e.deltaY * 0.0011), 0.7, 4.2);
 }, { passive: false });
+
+// Drag Mode Switch (Rotate vs Pan — great on mobile & desktop!)
+const dragModeBtn = document.getElementById('drag-mode-btn');
+const dragModeIcon = document.getElementById('drag-mode-icon');
+const dragModeText = document.getElementById('drag-mode-text');
+dragModeBtn.addEventListener('click', () => {
+  dragPanMode = !dragPanMode;
+  dragModeBtn.classList.toggle('pan', dragPanMode);
+  sceneHost.classList.toggle('pan-cursor', dragPanMode);
+  dragModeIcon.textContent = dragPanMode ? '✥' : '⟳';
+  dragModeText.textContent = dragPanMode ? '拖曳：平移' : '拖曳：旋轉';
+});
+
+// Directional Nav Pad (supports tap & press-and-hold!)
+let activeNavAction = null;
+function applyNavAction(act, stepScale = 1) {
+  flying = false;
+  const panStep = 14 * stepScale;
+  if (act === 'up') panByScreenDelta(0, panStep);
+  else if (act === 'down') panByScreenDelta(0, -panStep);
+  else if (act === 'left') panByScreenDelta(panStep, 0);
+  else if (act === 'right') panByScreenDelta(-panStep, 0);
+  else if (act === 'rotL') cur.th -= 0.045 * stepScale;
+  else if (act === 'rotR') cur.th += 0.045 * stepScale;
+  else if (act === 'center') focusZone(null);
+}
+
+document.querySelectorAll('.nav-pad button[data-nav]').forEach(btn => {
+  const act = btn.dataset.nav;
+  if (act === 'center') {
+    btn.addEventListener('click', () => focusZone(null));
+    return;
+  }
+  btn.addEventListener('pointerdown', e => {
+    e.stopPropagation();
+    activeNavAction = act;
+    applyNavAction(act, 1.5);
+  });
+  const stopNav = () => { activeNavAction = null; };
+  btn.addEventListener('pointerup', stopNav);
+  btn.addEventListener('pointerleave', stopNav);
+  btn.addEventListener('pointercancel', stopNav);
+});
 
 /* ---------- HUD Buttons, Day/Night & Clock ---------- */
 document.getElementById('overview-btn').addEventListener('click', () => focusZone(null));
@@ -2090,7 +2333,6 @@ function syncMotionUI() {
 motionBtn.addEventListener('click', () => { motionPaused = !motionPaused; syncMotionUI(); });
 syncMotionUI();
 
-// Fullscreen toggle
 document.getElementById('fs-btn').addEventListener('click', async () => {
   if (!document.fullscreenElement && !mapEl.classList.contains('is-fullscreen')) {
     try { await mapEl.requestFullscreen(); } catch { mapEl.classList.toggle('is-fullscreen'); }
@@ -2101,13 +2343,11 @@ document.getElementById('fs-btn').addEventListener('click', async () => {
   updateCameraProjection();
 });
 
-// Help dialog
 const helpDlg = document.getElementById('help-dialog');
 document.getElementById('help-btn').addEventListener('click', () => helpDlg.showModal());
 document.getElementById('dlg-close').addEventListener('click', () => helpDlg.close());
 helpDlg.addEventListener('click', e => { if (e.target === helpDlg) helpDlg.close(); });
 
-// Keyboard controls
 window.addEventListener('keydown', e => {
   if (helpDlg.open && e.key === 'Escape') { helpDlg.close(); return; }
   if (e.key === 'Home') { focusZone(null); }
@@ -2119,7 +2359,6 @@ window.addEventListener('keydown', e => {
   else if (e.key === '-' || e.key === '_') { flying = false; cur.zoom = clamp(cur.zoom / 1.15, 0.7, 4.2); }
 });
 
-// Day/Night & Taiwan Clock
 let lightingPref = 'auto';
 let nightTarget = 0, nightBlend = 0;
 
@@ -2158,14 +2397,14 @@ const projVec = new THREE.Vector3();
 const lerp = (a, b, t) => a + (b - a) * t;
 const lerpAng = (a, b, t) => a + ((((b - a) % (2 * Math.PI)) + 3 * Math.PI) % (2 * Math.PI) - Math.PI) * t;
 const daySky = new THREE.Color(0xf6fbfa), nightSky = new THREE.Color(0xc0cdef);
-const dayGnd = new THREE.Color(0xbbc8b7), nightGnd = new THREE.Color(0x6c7599);
-const daySun = new THREE.Color(0xfff6e7), nightSun = new THREE.Color(0xa4bbf4);
+const dayGnd = new THREE.Color(0xa8baa2), nightGnd = new THREE.Color(0x6c7599);
+const daySun = new THREE.Color(0xfff5e4), nightSun = new THREE.Color(0xa4bbf4);
 
 function animate() {
   const dt = Math.min(clock.getDelta(), 0.05);
   if (!motionPaused) simTime += dt;
+  if (activeNavAction) applyNavAction(activeNavAction, dt * 18);
 
-  // Smooth camera ease-to-zone
   if (flying) {
     const a = 1 - Math.exp(-dt * 4.5);
     cur.tx = lerp(cur.tx, goal.tx, a);
@@ -2179,28 +2418,24 @@ function animate() {
     }
   }
 
-  // Smooth day <-> night lighting blend
   nightBlend = lerp(nightBlend, nightTarget, 1 - Math.exp(-dt * 4));
   hemiLight.color.copy(daySky).lerp(nightSky, nightBlend);
   hemiLight.groundColor.copy(dayGnd).lerp(nightGnd, nightBlend);
-  hemiLight.intensity = lerp(1.55, 0.58, nightBlend);
+  hemiLight.intensity = lerp(1.0, 0.58, nightBlend);
   sunLight.color.copy(daySun).lerp(nightSun, nightBlend);
-  sunLight.intensity = lerp(1.95, 0.72, nightBlend);
-  shadowCatcher.material.opacity = lerp(0.19, 0.28, nightBlend);
+  sunLight.intensity = lerp(1.42, 0.72, nightBlend);
+  shadowCatcher.material.opacity = lerp(0.2, 0.3, nightBlend);
   nightGlows.forEach(g => { g.mat.opacity = g.base * nightBlend; });
   nightBulbs.forEach(m => m.color.setHex(nightBlend > 0.4 ? 0xffe49c : 0xf4f8f5));
 
-  // Animate rides, shuttle bus & visitors
   animHooks.forEach(fn => fn(simTime));
-  const busLoop = ((simTime * 1.9) % 23) - 11.5;
-  bus.position.x = busLoop;
+  bus.position.x = ((simTime * 1.9) % 21) - 10.5;
   walkers.forEach(w => {
-    const pos = Math.sin(simTime * w.speed + w.phase) * 7.4;
+    const pos = Math.sin(simTime * w.speed + w.phase) * 6.8;
     if (w.path === 'x') w.g.position.set(pos, 0.05, w.lane);
     else w.g.position.set(w.lane, 0.05, pos);
   });
 
-  // Update orthographic camera orbit position
   const dist = 46;
   camera.zoom = cur.zoom;
   camera.updateProjectionMatrix();
@@ -2213,7 +2448,6 @@ function animate() {
 
   renderer.render(scene, camera);
 
-  // Project 3D zone pins onto 2D #map coordinates
   if (pinsVisible) {
     const w = mapEl.clientWidth, h = mapEl.clientHeight;
     zoneGroups.forEach(zg => {
