@@ -245,21 +245,38 @@ html[data-lighting="night"] #map {
   left: 0;
   top: 0;
   display: none;
+  align-items: center;
+  gap: 5px;
   pointer-events: auto;
-  border: 1px solid #d2dac8;
-  background: rgba(255, 253, 244, 0.96);
+  border: 2px solid var(--pin-c, #254a43);
+  background: rgba(255, 253, 244, 0.97);
   color: var(--ink-strong);
   font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
   line-height: 1;
-  padding: 5px 8px;
+  padding: 3px 8px 3px 3px;
   border-radius: 999px;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(25, 54, 48, 0.16);
-  transform: translate(-50%, calc(-100% - 9px));
-  transition: transform 0.16s ease, background 0.16s ease, color 0.16s ease, border-color 0.16s ease, opacity 0.2s ease;
+  box-shadow: 0 5px 14px rgba(25, 54, 48, 0.22);
+  will-change: transform;
+  transition: background 0.16s ease, color 0.16s ease, opacity 0.2s ease, box-shadow 0.16s ease;
   white-space: nowrap;
+  z-index: 3;
+}
+
+.pin-code {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--pin-c, #254a43);
+  color: #ffffff;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
 .pin::after {
@@ -267,51 +284,64 @@ html[data-lighting="night"] #map {
   position: absolute;
   left: 50%;
   top: 100%;
-  width: 1.5px;
-  height: 9px;
-  background: currentColor;
-  opacity: 0.48;
+  width: 2px;
+  height: 10px;
+  background: var(--pin-c, #254a43);
+  opacity: 0.85;
   transform: translateX(-50%);
 }
 
 .pin:hover {
   background: #ffffff;
-  border-color: var(--aqua);
-  transform: translate(-50%, calc(-100% - 12px)) scale(1.06);
-  z-index: 6;
+  box-shadow: 0 8px 20px rgba(25, 54, 48, 0.3);
+  z-index: 7;
 }
 
 .pin .pin-name {
-  display: none;
+  display: inline;
   font-family: var(--sans);
-  font-weight: 600;
-  margin-left: 5px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-strong);
 }
 
-.pin:hover .pin-name,
-.pin.active .pin-name {
-  display: inline;
+@media (max-width: 639px) {
+  .pin { padding: 2px; }
+  .pin .pin-name { display: none; }
+  .pin.active .pin-name { display: inline; padding-right: 6px; }
 }
 
 .pin.active {
-  background: var(--ink-strong);
-  color: #faf8f1;
-  border-color: var(--ink-strong);
+  background: var(--pin-c, #193630);
+  color: #ffffff;
+  border-color: #ffffff;
+  box-shadow: 0 8px 22px rgba(25, 54, 48, 0.35);
   z-index: 8;
 }
 
-.pin.dim { opacity: 0.28; }
+.pin.active .pin-code {
+  background: rgba(255, 255, 255, 0.24);
+  color: #ffffff;
+}
+
+.pin.active .pin-name {
+  color: #ffffff;
+}
+
+.pin.dim { opacity: 0.32; }
 
 html[data-lighting="night"] .pin {
-  background: rgba(24, 39, 60, 0.92);
-  color: #eef5f2;
-  border-color: #466183;
+  background: rgba(20, 34, 54, 0.94);
+  color: #f4f8f7;
+}
+
+html[data-lighting="night"] .pin .pin-name {
+  color: #f4f8f7;
 }
 
 html[data-lighting="night"] .pin.active {
-  background: #e7bd64;
-  color: #192638;
-  border-color: #e7bd64;
+  background: var(--pin-c, #e7bd64);
+  border-color: #ffffff;
 }
 
 /* Map HUD Overlays */
@@ -1193,17 +1223,17 @@ dialog#help-dialog::backdrop {
 
 <script>
 const ZONES = [
-  { code:'01', en:'AI GATEWAY', cat:'基礎入門', t:'AI 世界入口', d:'認識人工智慧、生成式 AI 與大型語言模型。', bg:'#d9f0ec', pos:[0, 0.2] },
-  { code:'02', en:'CLOUD AI', cat:'雲端架構', t:'雲端 AI 島', d:'透過網際網路連接遠端資料中心的 AI 服務，依使用量或訂閱付費。', bg:'#d8eef4', pos:[4.8, -5.6] },
-  { code:'03', en:'ON-PREM AI', cat:'地端架構', t:'地端 AI 島', d:'AI 部署在企業自己的電腦與伺服器中，資料留在內部環境。', bg:'#fae2db', pos:[-5.2, -5.6] },
-  { code:'04', en:'AI TOOLS', cat:'軟體生態', t:'AI 軟體工具島', d:'對話、推論、知識管理與開發自動化工具。', bg:'#f7ecd2', pos:[7.4, -0.4] },
-  { code:'05', en:'AI HARDWARE', cat:'算力硬體', t:'AI 硬體設備島', d:'AI PC、工作站、伺服器與 Edge AI 設備。', bg:'#dce6ea', pos:[-7.4, -0.4] },
-  { code:'06', en:'AI MODELS', cat:'模型規格', t:'AI 模型島', d:'參數量、量化與 GPU 記憶體之間的關係。', bg:'#dfeee3', pos:[-6.4, 5.2] },
-  { code:'07', en:'RAG KNOWLEDGE', cat:'知識管理', t:'AI 知識管理島', d:'讓 AI 讀懂企業自己的文件（RAG）。', bg:'#f7e3e8', pos:[6.8, 5.0] },
-  { code:'08', en:'HYBRID COMPARE', cat:'架構比較', t:'雲端與地端比較島', d:'依需求評估，也可以採用混合式架構。', bg:'#f5ebd7', pos:[0, -6.8] },
-  { code:'09', en:'ENTERPRISE', cat:'產業應用', t:'企業 AI 應用島', d:'製造、金融、教育、醫療、零售與軌道運輸。', bg:'#e3f0df', pos:[2.4, 6.2] },
-  { code:'10', en:'HANDS-ON LAB', cat:'實作關卡', t:'AI 實作實驗室', d:'六個關卡，親手建置自己的 AI。', bg:'#d9f0ec', pos:[-2.6, 5.6] },
-  { code:'11', en:'FUTURE MAP', cat:'趨勢藍圖', t:'AI 未來與學習行囊', d:'建立屬於自己的 AI 技術地圖。', bg:'#f7ecd2', pos:[4.2, 2.2] }
+  { code:'01', short:'AI入口', en:'AI GATEWAY', cat:'基礎入門', t:'AI 世界入口', d:'認識人工智慧、生成式 AI 與大型語言模型。', bg:'#d9f0ec', pinCol:'#0d9488', pinY:2.45, pos:[0, 0.2] },
+  { code:'02', short:'雲端AI', en:'CLOUD AI', cat:'雲端架構', t:'雲端 AI 島', d:'透過網際網路連接遠端資料中心的 AI 服務，依使用量或訂閱付費。', bg:'#d8eef4', pinCol:'#0284c7', pinY:2.95, pos:[4.8, -5.6] },
+  { code:'03', short:'地端AI', en:'ON-PREM AI', cat:'地端架構', t:'地端 AI 島', d:'AI 部署在企業自己的電腦與伺服器中，資料留在內部環境。', bg:'#fae2db', pinCol:'#e15b48', pinY:2.05, pos:[-5.2, -5.6] },
+  { code:'04', short:'軟體工具', en:'AI TOOLS', cat:'軟體生態', t:'AI 軟體工具島', d:'對話、推論、知識管理與開發自動化工具。', bg:'#f7ecd2', pinCol:'#d97706', pinY:2.55, pos:[7.4, -0.4] },
+  { code:'05', short:'硬體設備', en:'AI HARDWARE', cat:'算力硬體', t:'AI 硬體設備島', d:'AI PC、工作站、伺服器與 Edge AI 設備。', bg:'#dce6ea', pinCol:'#2563eb', pinY:1.35, pos:[-7.4, -0.4] },
+  { code:'06', short:'AI模型', en:'AI MODELS', cat:'模型規格', t:'AI 模型島', d:'參數量、量化與 GPU 記憶體之間的關係。', bg:'#dfeee3', pinCol:'#7c3aed', pinY:2.65, pos:[-6.4, 5.2] },
+  { code:'07', short:'知識RAG', en:'RAG KNOWLEDGE', cat:'知識管理', t:'AI 知識管理島', d:'讓 AI 讀懂企業自己的文件（RAG）。', bg:'#f7e3e8', pinCol:'#db2777', pinY:2.45, pos:[6.8, 5.0] },
+  { code:'08', short:'雲地比較', en:'HYBRID COMPARE', cat:'架構比較', t:'雲端與地端比較島', d:'依需求評估，也可以採用混合式架構。', bg:'#f5ebd7', pinCol:'#b45309', pinY:2.05, pos:[0, -6.8] },
+  { code:'09', short:'企業應用', en:'ENTERPRISE', cat:'產業應用', t:'企業 AI 應用島', d:'製造、金融、教育、醫療、零售與軌道運輸。', bg:'#e3f0df', pinCol:'#16a34a', pinY:2.1, pos:[2.4, 6.2] },
+  { code:'10', short:'實作實驗', en:'HANDS-ON LAB', cat:'實作關卡', t:'AI 實作實驗室', d:'六個關卡，親手建置自己的 AI。', bg:'#d9f0ec', pinCol:'#0f766e', pinY:1.95, pos:[-2.6, 5.6] },
+  { code:'11', short:'未來藍圖', en:'FUTURE MAP', cat:'趨勢藍圖', t:'AI 未來與學習行囊', d:'建立屬於自己的 AI 技術地圖。', bg:'#f7ecd2', pinCol:'#ca8a04', pinY:2.55, pos:[4.2, 2.2] }
 ];
 
 const KNOW = {
@@ -2016,14 +2046,15 @@ ZONES.forEach((z, idx) => {
   const pin = document.createElement('button');
   pin.type = 'button';
   pin.className = 'pin';
-  pin.innerHTML = `<span>${z.code}</span><span class="pin-name">${z.t}</span>`;
+  pin.style.setProperty('--pin-c', z.pinCol);
+  pin.innerHTML = `<span class="pin-code">${z.code}</span><span class="pin-name">${z.short}</span>`;
   pin.addEventListener('click', e => {
     e.stopPropagation();
     focusZone(idx);
   });
   pinsEl.appendChild(pin);
 
-  zoneGroups.push({ ...z, idx, g, pin, anchor: new THREE.Vector3(z.pos[0], 2.55, z.pos[1]) });
+  zoneGroups.push({ ...z, idx, g, pin, anchor: new THREE.Vector3(z.pos[0], z.pinY, z.pos[1]) });
 });
 
 /* ---------- Camera, Responsive Framing & Navigation ---------- */
@@ -2080,7 +2111,7 @@ function renderSidebar() {
           const i = ZONES.indexOf(z);
           return `
             <button type="button" class="zone-card ${visited.has(i) ? 'visited' : ''}" data-zone="${i}">
-              <div class="zone-badge" style="background:${z.bg}">${z.code}</div>
+              <div class="zone-badge" style="background:${z.pinCol};color:#fff;border-color:${z.pinCol}">${z.code}</div>
               <div class="zone-meta">
                 <span class="zone-name">${z.t}</span>
                 <span class="zone-sub">${z.code} / ${z.en} · ${KNOW[i].length} 篇</span>
@@ -2445,6 +2476,7 @@ function animate() {
     cur.tz + dist * Math.sin(cur.ph) * Math.cos(cur.th)
   );
   camera.lookAt(cur.tx, cur.ty, cur.tz);
+  camera.updateMatrixWorld(true);
 
   renderer.render(scene, camera);
 
@@ -2454,10 +2486,11 @@ function animate() {
       projVec.copy(zg.anchor).project(camera);
       const px = (projVec.x * 0.5 + 0.5) * w;
       const py = (-projVec.y * 0.5 + 0.5) * h;
-      const inside = projVec.z < 1 && px > -20 && px < w + 20 && py > 20 && py < h + 20;
-      zg.pin.style.display = inside ? 'block' : 'none';
-      zg.pin.style.left = `${px}px`;
-      zg.pin.style.top = `${py}px`;
+      const inside = projVec.z >= -1 && projVec.z <= 1 && px > -12 && px < w + 12 && py > 28 && py < h + 10;
+      zg.pin.style.display = inside ? 'inline-flex' : 'none';
+      if (inside) {
+        zg.pin.style.transform = `translate3d(${px.toFixed(1)}px, ${py.toFixed(1)}px, 0) translate(-50%, calc(-100% - 10px))`;
+      }
     });
   }
 
