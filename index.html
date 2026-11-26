@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>AI Universe｜認識雲端 AI 與地端 AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<style>
+:root { --ink:#0f3b3d; --teal:#14b8a6; --teal-d:#0f766e; --mint:#e2f5f0; }
+* { box-sizing: border-box; }
+html, body { margin:0; height:100%; overflow:hidden; font-family:'Noto Sans TC', system-ui, sans-serif; color:var(--ink);
+  background: radial-gradient(circle at 12% 8%, #d6f6ff 0%, transparent 42%), radial-gradient(circle at 88% 18%, #d9fff1 0%, transparent 46%), radial-gradient(circle at 60% 100%, #e0ecff 0%, transparent 50%), linear-gradient(180deg,#ffffff 0%,#f4fbf9 55%,#e2f5f0 100%); }
+#scene { position:absolute; inset:0; touch-action:none; cursor:grab; }
+#scene.hot { cursor:pointer; }
+#scene.drag { cursor:grabbing; }
+#labels { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+.label { position:absolute; left:0; top:0; display:none; white-space:nowrap; font-size:13px; font-weight:500; padding:4px 12px;
+  border-radius:999px; background:rgba(255,255,255,.92); border:1px solid #ccf0e8; box-shadow:0 1px 3px rgba(0,0,0,.05); }
+.label.on { background:var(--teal-d); color:#fff; border-color:var(--teal-d); }
+.ui { position:absolute; inset:0; pointer-events:none; display:flex; flex-direction:column; justify-content:space-between; padding:16px; }
+@media (min-width:640px) { .ui { padding:24px; } }
+header { display:flex; justify-content:space-between; gap:16px; align-items:flex-start; }
+.eyebrow { margin:0; font-size:12px; font-weight:500; color:var(--teal-d); }
+h1 { margin:0; font-size:18px; font-weight:700; background:linear-gradient(90deg,#0284c7,#14b8a6,#22c55e); -webkit-background-clip:text; background-clip:text; color:transparent; }
+@media (min-width:640px) { h1 { font-size:24px; } }
+button { pointer-events:auto; font:inherit; font-size:14px; font-weight:500; padding:8px 16px; border-radius:999px;
+  border:1px solid #99e6da; background:#fff; color:var(--ink); cursor:pointer; box-shadow:0 1px 2px rgba(0,0,0,.06); }
+button:disabled { opacity:.4; cursor:default; }
+button:not(:disabled):hover { background:#f0fdfa; }
+#foot { font-size:13px; color:#475569; }
+#card { pointer-events:auto; max-width:460px; width:calc(100vw - 32px); max-height:58vh; overflow:auto; background:rgba(255,255,255,.96); border:1px solid #ccf0e8;
+  border-radius:16px; padding:20px; box-shadow:0 8px 24px rgba(15,59,61,.08); }
+#card h2 { margin:0 0 6px; font-size:18px; }
+#card p { margin:0; font-size:14px; line-height:1.7; color:#475569; }
+#card .tag { display:inline-block; margin-top:14px; font-size:12px; color:var(--teal-d); background:var(--mint); padding:4px 10px; border-radius:999px; }
+.nodes { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+.node { font-size:13px; padding:6px 12px; background:var(--mint); border-color:#7ee0cf; color:var(--teal-d); font-weight:500; }
+.node:hover { background:#c9f3ea; }
+#detail { margin-top:14px; padding-top:14px; border-top:1px dashed #7ee0cf; }
+#detail h3 { margin:0 0 6px; font-size:15px; color:var(--teal-d); }
+#detail p { margin:0; font-size:14px; line-height:1.8; color:#334155; }
+.links { margin:10px 0 0; padding-left:18px; font-size:13px; line-height:1.9; }
+.links a { color:var(--teal-d); }
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<div id="labels"></div>
+<div class="ui">
+  <header>
+    <div>
+      <p class="eyebrow">AI Universe</p>
+      <h1>認識雲端 AI 與地端 AI</h1>
+    </div>
+    <button id="home" disabled>回到宇宙首頁</button>
+  </header>
+  <footer id="foot"><p>拖曳旋轉・滾輪或雙指縮放・點擊島嶼前往探索</p></footer>
+</div>
+
+<script>
+const ISLANDS = [
+  { t:'AI 世界入口', d:'認識人工智慧、生成式 AI 與大型語言模型。', c:0x14b8a6 },
+  { t:'雲端 AI 島', d:'透過網際網路連接遠端資料中心的 AI 服務，依使用量或訂閱付費。', c:0x0ea5a4 },
+  { t:'地端 AI 島', d:'AI 部署在企業自己的電腦與伺服器中，資料留在內部環境。', c:0x2dd4bf },
+  { t:'AI 軟體工具島', d:'對話、推論、知識管理與開發自動化工具。', c:0x0d9488 },
+  { t:'AI 硬體設備島', d:'AI PC、工作站、伺服器與 Edge AI 設備。', c:0x5eead4 },
+  { t:'AI 模型島', d:'參數量、量化與 GPU 記憶體之間的關係。', c:0x0f766e },
+  { t:'AI 知識管理島', d:'讓 AI 讀懂企業自己的文件（RAG）。', c:0x34d3b5 },
+  { t:'雲端與地端比較島', d:'依需求評估，也可以採用混合式架構。', c:0x19a39a },
+  { t:'企業 AI 應用島', d:'製造、金融、教育、醫療、零售與軌道運輸。', c:0x7fd8cc },
+  { t:'AI 實作實驗室', d:'六個關卡，親手建置自己的 AI。', c:0x0b8f86 },
+  { t:'AI 未來與學習行囊', d:'建立屬於自己的 AI 技術地圖。', c:0x4fc3b0 },
+];
+
+// 鮮明的藍綠色系島嶼配色
+const PAL = [0x00c2a8, 0x0096ff, 0x00d9c0, 0x22c55e, 0x2dd4bf, 0x0ea5e9, 0x10b981, 0x06b6d4, 0x84cc16, 0x14b8a6, 0x38bdf8];
+
+// 知識節點：島嶼 index → 節點清單（第三階段先完成第一、二、三、八島）
+const KNOW = {
+0: [
+ {t:'什麼是 AI？', b:'人工智慧（AI）是讓電腦完成通常需要人類智慧才能做的事，例如辨識影像、理解語言、做判斷與預測。'},
+ {t:'AI、機器學習、深度學習', b:'三者是包含關係：AI 範圍最大，機器學習是讓電腦從資料中找規律，深度學習則是使用多層類神經網路的機器學習方法。'},
+ {t:'什麼是生成式 AI？', b:'能根據提示（Prompt）產生新內容的 AI，包括文字、圖片、程式碼與語音。ChatGPT、Claude、Gemini 都屬於這一類。'},
+ {t:'什麼是大型語言模型（LLM）？', b:'以大量文字訓練而成的模型，核心能力是根據前文預測下一個字詞。模型大小常以參數量表示，例如 7B 代表 70 億參數，70B 代表 700 億參數。'},
+ {t:'AI 如何生成答案？', b:'模型會把輸入切成 token（字詞片段），逐一計算最可能的下一個 token，最後組成完整回答。因為它依機率生成，有時會產生看似合理但錯誤的內容，重要資訊仍需查證。'}
+],
+1: [
+ {t:'雲端 AI 是什麼？', b:'AI 模型部署在服務商的資料中心，使用者透過瀏覽器、手機 App 或 API 連線使用。運算發生在遠端伺服器，本機只負責輸入與顯示。'},
+ {t:'怎麼收費？', b:'常見有三種：個人訂閱制（月費）、依 token 或 API 呼叫次數計費，以及企業授權方案。用量越大，費用通常越高，因此需要評估長期成本。'},
+ {t:'優點與缺點', b:'優點是免自購高階 GPU、能快速擴充人數與算力，模型也會持續更新。缺點是資料需傳送到服務商端、依賴網路品質，長期大量使用時費用可能明顯攀升。'},
+ {t:'常見雲端 AI 服務', b:'以下是常見的雲端 AI 對話與平台服務，可直接前往官網了解方案與資料政策。', l:[['ChatGPT','https://chatgpt.com'],['Claude','https://claude.ai'],['Google Gemini','https://gemini.google.com'],['Microsoft Copilot','https://copilot.microsoft.com'],['Google Vertex AI','https://cloud.google.com/vertex-ai'],['Microsoft Azure AI','https://azure.microsoft.com/products/ai-services']]},
+ {t:'使用前要注意什麼？', b:'應確認服務商的資料保存期限、是否用於模型訓練，以及企業版與個人版的差異。涉及個資或機密資料時，應先依內部規範取得許可。'}
+],
+2: [
+ {t:'地端 AI 是什麼？', b:'AI 模型部署在企業自己的機房、工作站或私有雲上，資料在企業內部網路中處理，不需要送到外部服務。'},
+ {t:'什麼情況適合地端？', b:'機密文件、醫療與金融等受嚴格規範的資料、內部知識管理，以及法規要求資料留在境內的場景，通常較適合地端部署。'},
+ {t:'需要什麼硬體？', b:'主要是 GPU 與足夠的 VRAM（顯示記憶體），因為模型需要完整載入記憶體才能執行。除了硬體，還需要人員負責維運、更新與權限管理。'},
+ {t:'成本如何計算？', b:'地端初期投入較高，但用量穩定時，單位成本可能較低。有業者估算，在大量且穩定的使用情境下，地端成本可能在一至兩年內追上雲端 API 費用，實際數字需依自身用量評估。'},
+ {t:'資策會 EdgeMind AI', b:'資策會推出的地端 AI 解決方案，主要用於企業知識管理與文件查詢，強調資料留在企業內部。官方網站連結仍待確認。'},
+ {t:'常見地端工具', b:'以下工具可用來在本機或企業伺服器執行開源模型，依使用情境選擇。', l:[['Ollama','https://ollama.com'],['LM Studio','https://lmstudio.ai'],['vLLM','https://docs.vllm.ai'],['Open WebUI','https://openwebui.com'],['NVIDIA NIM','https://developer.nvidia.com/nim']]}
+],
+7: [
+ {t:'三個關鍵問題', b:'選擇前可以先問：資料能不能離開企業？用量大不大、是否穩定？團隊有沒有能力維運？三個問題的答案，會大致決定適合的方向。'},
+ {t:'混合式 AI（Hybrid）', b:'多數企業最後會採用混合架構：涉及機密的任務交給地端模型，不涉及敏感資訊但需要大量算力的任務，交給雲端模型處理。'},
+ {t:'情境對照', b:'個人日常使用，通常適合雲端；中小企業知識庫，可依資料敏感度選擇地端或混合；金融機密資料，多半優先地端；製造現場的即時品檢，適合邊緣或地端；大量使用者的生成式 AI 平台，通常適合雲端。'},
+ {t:'常見迷思', b:'「機密資料一定不能用 AI」與「地端一定比較便宜」都不完全正確。前者可以透過地端或私有化方案解決，後者則要看用量與維運成本。'}
+],
+3: [
+ {t:'AI 對話與生成工具', b:'雲端服務中最常用的 AI 對話工具，個人與企業都能快速上手，不需要自己架設環境。', l:[['ChatGPT：通用對話與生成（雲端・入門）','https://chatgpt.com'],['Claude：長文理解與寫作（雲端・入門）','https://claude.ai'],['Google Gemini：整合 Google 服務（雲端・入門）','https://gemini.google.com'],['Microsoft Copilot：整合 Office 與 Windows（雲端・入門）','https://copilot.microsoft.com']]},
+ {t:'AI 模型與推論工具', b:'用來在本機或伺服器執行模型的工具，資料可以留在自己的環境中。', l:[['Ollama：一行指令在本機執行模型（地端・入門）','https://ollama.com'],['LM Studio：圖形介面，適合新手（地端・入門）','https://lmstudio.ai'],['vLLM：高吞吐量的伺服器推論（地端・中高階）','https://docs.vllm.ai'],['Hugging Face：開源模型與資料集平台（雲端為主・中階）','https://huggingface.co'],['NVIDIA NIM：預先最佳化的推論服務（地端・中高階）','https://developer.nvidia.com/nim']]},
+ {t:'AI 知識管理與 RAG 工具', b:'把企業文件接進 AI，讓回答有依據。資料敏感時可選擇地端部署。資策會的 EdgeMind AI 也屬於地端知識管理方案，官方連結仍待確認。', l:[['Open WebUI：自架式 AI 對話介面（地端・入門）','https://openwebui.com'],['Dify：視覺化建立 AI 應用與知識庫（雲端或地端・中階）','https://dify.ai'],['AnythingLLM：文件問答工具（雲端或地端・入門）','https://anythingllm.com']]},
+ {t:'AI 開發與自動化工具', b:'用來串接模型、資料與其他系統，是進一步開發 AI 應用的基礎。', l:[['Python：AI 開發最常用的程式語言（入門）','https://www.python.org'],['LangChain：串接模型與工具的開發框架（中階）','https://www.langchain.com'],['n8n：視覺化流程自動化（入門・中階）','https://n8n.io'],['Flowise：拖拉方式建立 LLM 流程（入門）','https://flowiseai.com']]},
+ {t:'如何選工具？', b:'先確認資料能不能上雲，再看使用對象與技術能力。一般使用者可從雲端對話工具開始；想保護資料，可用 Ollama 搭配 Open WebUI；要做企業知識庫，再考慮 RAG 工具。同一工具可能同時支援雲端與地端，應以實際部署方式為準。'}
+],
+4: [
+ {t:'AI PC 與 AI 筆電', b:'內建 NPU（神經網路處理單元）的筆電與桌機，適合執行小型模型、影像處理與本機 AI 助理。主流平台包括 Intel Core Ultra、AMD Ryzen AI，以及搭載 NVIDIA RTX 筆電 GPU 的機型。'},
+ {t:'GPU 與 VRAM 的用途', b:'GPU 負責大量平行運算，是 AI 推論與訓練的核心。VRAM（顯示記憶體）決定模型能否完整載入，VRAM 不足時，模型無法執行或速度大幅下降。'},
+ {t:'CPU、RAM、SSD 的作用', b:'CPU 負責資料前處理與系統調度；系統記憶體（RAM）影響可同時處理的工作量，部分模型也能在 CPU 上執行，但速度較慢；SSD 則影響模型載入速度與資料存取效率。'},
+ {t:'AI 工作站：RTX 5090 與 RTX PRO 系列', b:'GeForce RTX 5090 配備 32GB GDDR7 顯示記憶體，適合中小型模型與個人開發。NVIDIA RTX PRO 6000 Blackwell 提供 96GB GDDR7 ECC 記憶體，工作站版功耗 600W，適合大型模型與專業工作。'},
+ {t:'AI 伺服器與多 GPU 架構', b:'企業級 AI 伺服器以多張 GPU 組成運算叢集，搭配高速網路與企業級儲存，適合同時服務大量使用者，或進行模型微調。RTX PRO 6000 也有伺服器版本，設計用於資料中心長時間運作。'},
+ {t:'Edge AI Box 與 NVIDIA Jetson', b:'邊緣 AI 設備安裝在現場，例如工廠產線、交通設施或攝影機旁，就近處理影像與感測資料，降低延遲並減少資料上傳。NVIDIA Jetson 是常見的嵌入式 AI 模組，可搭配工業電腦或 AI BOX 使用。'},
+ {t:'雲端 GPU 實例', b:'AWS、Google Cloud 與 Microsoft Azure 都提供 GPU 實例，依使用時數計費，不需自購硬體，適合短期專案或需求波動大的情況。長期穩定使用時，費用應與自購硬體比較。'}
+],
+5: [
+ {t:'參數量：7B、14B、32B、70B', b:'B 代表十億（Billion）參數。參數越多，通常能力越強，但也需要更多記憶體與算力。例如 7B 約為 70 億參數，70B 約為 700 億參數。'},
+ {t:'量化：FP16、INT8、INT4', b:'量化是用較少的位元儲存模型權重，以降低記憶體需求。以每個參數佔用的位元組估算，FP16 約 2 個，Q8 約 1 個，常見的 Q4 約 0.57 個。量化程度越高，記憶體越省，但品質可能受影響。'},
+ {t:'模型與 VRAM 的關係', b:'粗估公式：所需記憶體約等於參數量乘以每參數位元組數，再加上上下文快取與約 15 至 20% 的額外開銷。例如 70B 模型在 Q4 量化下約需 40GB，7B 模型在 Q4 下約需 5GB 左右。'},
+ {t:'開源模型與商用模型', b:'開源模型（如 Qwen、Llama、Gemma、DeepSeek、Mistral）可下載到自己的設備執行，但各家授權條款不同，商用前必須確認。商用模型（如 GPT、Claude、Gemini）通常透過雲端服務使用，無法下載到本機。'},
+ {t:'代表模型家族', b:'Gemma（Google）、Llama（Meta）、Qwen（阿里巴巴）、DeepSeek、Mistral 都有開源版本，並提供不同大小供選擇。模型更新很快，選擇前應查看各家最新的官方資訊與授權條款。', l:[['Hugging Face 模型庫（查看各家模型）','https://huggingface.co']]},
+ {t:'MoE 與多模態 AI', b:'MoE（混合專家）模型總參數很大，但每次只啟用部分專家，因此推論較快；不過所有專家仍需載入記憶體，並不會省下記憶體。多模態 AI 則能同時理解文字、影像與語音。'}
+],
+6: [
+ {t:'什麼是 RAG？', b:'RAG（檢索增強生成）是先從企業文件中找出相關段落，再讓大型語言模型根據這些內容回答。好處是回答有依據、可附上來源，也比較不容易憑空捏造。'},
+ {t:'RAG 的完整流程', b:'先上傳並解析文件，掃描件需經過 OCR 文字辨識，接著切成段落並做 Embedding 向量化，存入 Vector Database。使用者提問時，系統檢索最相關的段落，交給 LLM 生成答案。'},
+ {t:'Embedding 與向量資料庫', b:'Embedding 會把文字轉換成一串數字（向量），意思相近的文字，向量距離也較近。向量資料庫負責快速找出與問題最接近的段落，是 RAG 檢索的核心。'},
+ {t:'企業應用案例', b:'常見場景包括人資制度查詢、財務歷史資料查詢、技術維修手冊檢索、企業 SOP 搜尋，以及內部教育訓練問答。這些文件更新頻繁，也較適合以地端方式管理。'},
+ {t:'如何建立企業私有知識庫？', b:'建議依序進行：盤點文件來源、確認權限與機密等級、清理過期版本、切段並加上標題與日期、用真實問題測試回答，最後建立定期更新的機制。'},
+ {t:'成功關鍵與常見失敗原因', b:'許多 RAG 專案的成敗取決於文件品質與切段方式，而不只是模型大小。常見問題包括文件過期、掃描品質差、權限控管不足，以及沒有人負責更新。', l:[['Open WebUI','https://openwebui.com'],['Dify','https://dify.ai'],['AnythingLLM','https://anythingllm.com']]}
+],
+8: [
+ {t:'分析框架：痛點、工具、架構、效益', b:'每個案例都依四步思考：先找出真正的痛點，選擇合適的 AI 工具，決定軟硬體架構（雲端、地端或混合），最後評估效益，並以小範圍試點驗證。'},
+ {t:'製造業', b:'痛點：人工品檢耗時，設備異常可能造成停機。AI 工具：影像辨識品檢、RAG 查詢維修手冊。架構：產線旁的 Edge AI Box，或工廠內網的地端 GPU 伺服器。效益：減少人工檢查負擔，較早發現異常。'},
+ {t:'金融業', b:'痛點：法規文件多，審閱與查找耗時。AI 工具：文件分析、法遵條文查詢、內部知識搜尋。架構：以地端為主，搭配權限控管與稽核紀錄。效益：縮短文件查找與審閱時間，並降低資料外流風險。'},
+ {t:'教育業', b:'痛點：教師備課負擔重，學生問題重複。AI 工具：AI 教學助理、教材草稿生成。架構：依學校預算與隱私要求，選擇雲端平台或校內地端。效益：減少重複答疑與備課時間，讓老師專注教學。'},
+ {t:'醫療業', b:'痛點：病歷與文件整理耗時，病患資料高度敏感。AI 工具：醫療文件輔助整理與摘要。架構：以地端為主，資料留在院內網路。效益：減輕文書負擔，讓醫護人員把時間放在病人身上。'},
+ {t:'零售業', b:'痛點：銷售資料分析費時，客服詢問量大。AI 工具：銷售數據分析、客服助理。架構：以雲端服務為主，但客戶個資需遵守個資保護規範。效益：加快客服回應，協助更快看出銷售趨勢。'},
+ {t:'軌道運輸', b:'痛點：巡檢依賴人力，異常不易即時發現。AI 工具：影像辨識、異常偵測。架構：現場以邊緣運算設備即時判讀，重要資料回傳中央系統。效益：協助及早發現異常，減輕巡檢負擔。'}
+],
+9: [
+ {t:'關卡 1：第一次 AI 對話', b:'學習目標：體驗生成式 AI 的基本互動。操作步驟：註冊 ChatGPT、Claude 或 Gemini 的免費版，輸入一個具體問題，再用追問修正答案。工具需求：瀏覽器與網路。預期成果：能說明什麼是提示，並察覺 AI 回答可能需要查證。'},
+ {t:'關卡 2：用 Ollama 在本機執行模型', b:'學習目標：了解模型如何在自己的電腦上執行。操作步驟：到 ollama.com 下載並安裝，於終端機輸入 ollama run 加上模型名稱即可開始對話。工具需求：至少 8GB 記憶體的電腦，有獨立 GPU 會更順暢。預期成果：下載完成後，能在離線狀態與本機模型對話。'},
+ {t:'關卡 3：建立自己的 AI 對話介面', b:'學習目標：為本機模型加上好用的網頁介面。操作步驟：依 openwebui.com 的說明安裝 Open WebUI，並連接 Ollama。工具需求：已完成關卡 2，並安裝 Docker。預期成果：能透過網頁切換模型並保存對話紀錄。'},
+ {t:'關卡 4：建立 RAG 知識庫', b:'學習目標：讓 AI 根據指定文件回答。操作步驟：準備 3 至 5 份非機密文件，上傳到 Open WebUI 或 AnythingLLM 的知識功能，再用實際問題測試。工具需求：關卡 3 的環境。預期成果：回答能附上來源段落，並能說明回答錯誤的原因。'},
+ {t:'關卡 5：觀察 VRAM 如何影響模型', b:'學習目標：理解量化與記憶體的關係。操作步驟：同一模型分別下載 Q4 與 Q8 版本，觀察記憶體佔用與回答速度的差異。工具需求：支援量化模型的本機工具。預期成果：能用參數量與量化等級估算一個模型需要的記憶體。'},
+ {t:'關卡 6：規劃一套企業地端 AI 系統', b:'學習目標：把前面學到的知識整合成方案。操作步驟：盤點應用場景與資料敏感度、評估使用人數與預算、選擇硬體與軟體、規劃權限與維運。工具需求：紙本或試算表即可。預期成果：完成一頁的系統規劃，並說明為何選擇雲端、地端或混合式。'}
+],
+10: [
+ {t:'AI 技術發展趨勢', b:'模型持續朝向更小、更高效發展，本機執行的能力也逐年提升。同時，越來越多企業把生成式 AI 融入既有流程，而不只是單獨使用聊天工具。'},
+ {t:'雲端與地端的未來', b:'未來較可能是混合式架構：機密與高頻資料留在地端，不敏感而需要大算力的任務交給雲端。選擇的關鍵在於資料敏感度、用量與維運能力。'},
+ {t:'Edge AI 與 AI PC', b:'把推論移到終端裝置或現場設備，可以降低網路延遲，並減少資料上傳。AI PC 與 Edge AI Box 都是這個趨勢的代表。'},
+ {t:'AI Agent（AI 代理）', b:'AI Agent 能拆解任務、呼叫工具並完成多步驟工作，例如查資料、整理成表格後寄出郵件。使用時應設定權限與人工確認點，避免自動化帶來的風險。'},
+ {t:'多模態 AI', b:'多模態 AI 能同時處理文字、影像、語音與影片，應用範圍更廣，例如看圖回答問題、分析影片內容，或結合語音與文件進行對話。'},
+ {t:'企業 AI 導入路徑', b:'建議由小場景開始：找出明確痛點，做小範圍試點，評估成本與效益，確認資料治理與權限，再逐步擴大，並同步培訓員工的使用能力。'},
+ {t:'如何建立個人 AI 學習地圖？', b:'可以依序從雲端工具體驗開始，再到本機模型、RAG 知識庫，最後延伸到企業應用。第四階段會加入收藏與進度功能，協助你記錄學習路徑。'}
+]
+};
+
+/* ---------- renderer & scene ---------- */
+const host = document.getElementById('scene');
+const labelsEl = document.getElementById('labels');
+const footEl = document.getElementById('foot');
+const homeBtn = document.getElementById('home');
+const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+host.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0xeef9f6, 30, 70);
+const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 200);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x9fdcd2, 1.1));
+const sun = new THREE.DirectionalLight(0xffffff, 1.0);
+sun.position.set(8, 14, 10);
+scene.add(sun);
+
+/* ---------- helpers ---------- */
+const mat = (c, o = {}) => new THREE.MeshStandardMaterial({
+  color: c, flatShading: true, roughness: 0.8,
+  ...(o.e ? { emissive: c, emissiveIntensity: 0.7 } : {}),
+  ...(o.t ? { transparent: true, opacity: o.t } : {}),
+});
+const M = (g, geo, c, x = 0, y = 0, z = 0, o = {}) => {
+  const m = new THREE.Mesh(geo, mat(c, o));
+  m.position.set(x, y, z); g.add(m); return m;
+};
+const B = (g, w, h, d, c, x, y, z, o) => M(g, new THREE.BoxGeometry(w, h, d), c, x, y, z, o);
+const S = (g, r, c, x, y, z, o) => M(g, new THREE.SphereGeometry(r, 14, 10), c, x, y, z, o);
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+
+/* ---------- island base + unique props ---------- */
+function base(c) {
+  const g = new THREE.Group();
+  M(g, new THREE.CylinderGeometry(1.8, 1.4, 0.6, 8), c);
+  M(g, new THREE.ConeGeometry(1.4, 2.4, 8), 0xd7f1ec, 0, -1.5, 0).rotation.x = Math.PI;
+  return g;
+}
+const win = (g, x, y, z, ry) => {
+  const w = new THREE.Group(); w.position.set(x, y, z); w.rotation.y = ry;
+  B(w, 0.75, 0.5, 0.04, 0xffffff, 0, 0, 0);
+  B(w, 0.75, 0.09, 0.05, 0x14b8a6, 0, 0.2, 0);
+  B(w, 0.5, 0.05, 0.02, 0x99e6da, -0.08, -0.05, 0.03);
+  g.add(w);
+};
+const PROPS = [
+  // 0 AI 世界入口：中央發光水晶與環繞知識節點
+  g => {
+    M(g, new THREE.OctahedronGeometry(0.55), 0xffffff, 0, 1, 0, { e: 1 });
+    M(g, new THREE.TorusGeometry(1.45, 0.025, 6, 48), 0x14b8a6, 0, 1, 0).rotation.x = Math.PI / 2;
+    for (let k = 0; k < 6; k++) {
+      const a = (k / 6) * Math.PI * 2;
+      S(g, 0.13, 0x14b8a6, Math.cos(a) * 1.45, 1, Math.sin(a) * 1.45, { e: 1 });
+    }
+  },
+  // 1 雲端 AI：伺服器機櫃與雲朵
+  g => {
+    [[-0.5, 0.2], [0.2, -0.4], [0.55, 0.3]].forEach(([x, z]) => {
+      B(g, 0.35, 0.9, 0.35, 0xffffff, x, 0.75, z);
+      B(g, 0.37, 0.06, 0.37, 0x14b8a6, x, 1.22, z, { e: 1 });
+    });
+    [[0, 1.9, 0, 0.45], [0.5, 1.8, 0.1, 0.35], [-0.45, 1.8, -0.1, 0.4]]
+      .forEach(([x, y, z, r]) => S(g, r, 0xffffff, x, y, z, { t: 0.9 }));
+  },
+  // 2 地端 AI：企業廠房與內部 GPU 機架
+  g => {
+    B(g, 1.1, 0.7, 0.9, 0xffffff, -0.25, 0.65, 0);
+    B(g, 1.2, 0.12, 1.0, 0x99e6da, -0.25, 1.06, 0);
+    B(g, 0.15, 0.8, 0.15, 0xb7e4dc, 0.35, 0.7, -0.3);
+    B(g, 0.45, 0.95, 0.4, 0x0f766e, 0.75, 0.78, 0.4);
+    [0.55, 0.75, 0.95].forEach(y => B(g, 0.3, 0.05, 0.02, 0x7ff5e0, 0.75, y, 0.61, { e: 1 }));
+    S(g, 0.1, 0x14b8a6, -0.9, 0.4, 0.6, { e: 1 });
+  },
+  // 3 AI 軟體工具：懸浮應用程式視窗
+  g => {
+    win(g, -0.55, 1.0, -0.3, 0.4);
+    win(g, 0.35, 1.25, 0.15, -0.5);
+    win(g, 0.0, 1.6, -0.6, 0.1);
+  },
+  // 4 AI 硬體設備：AI 晶片與 AI PC
+  g => {
+    B(g, 0.9, 0.12, 0.9, 0x334155, 0, 0.42, 0);
+    B(g, 0.55, 0.1, 0.55, 0x14b8a6, 0, 0.52, 0, { e: 1 });
+    B(g, 0.9, 0.05, 0.6, 0xffffff, -0.75, 0.35, 0.5);
+    B(g, 0.9, 0.55, 0.04, 0x0f3b3d, -0.75, 0.65, 0.2).rotation.x = -0.25;
+  },
+  // 5 AI 模型：不同參數量的模型方塊
+  g => {
+    let x = -1.1;
+    [0.25, 0.4, 0.55, 0.7].forEach((s, i) => {
+      B(g, s, s, s, [0x99e6da, 0x5eead4, 0x14b8a6, 0x0f766e][i], x + s / 2, 0.3 + s / 2, 0);
+      x += s + 0.1;
+    });
+    [[-0.6, 1.4, 0.6], [0.1, 1.5, 0.5], [0.7, 1.3, 0.4]].forEach(([a, b, c]) => S(g, 0.08, 0x14b8a6, a, b, c, { e: 1 }));
+  },
+  // 6 AI 知識管理（RAG）：知識書架與文件流
+  g => {
+    B(g, 0.9, 0.9, 0.25, 0xffffff, -0.4, 0.75, -0.5);
+    [0.45, 1.05].forEach(y => B(g, 0.8, 0.04, 0.22, 0x99e6da, -0.4, y, -0.5));
+    [0x14b8a6, 0x5eead4, 0x0f766e, 0x99e6da].forEach((c, j) => B(g, 0.1, 0.25, 0.15, c, -0.6 + j * 0.12, 0.6, -0.5));
+    win(g, 0.3, 1.3, 0.5, 0.3);
+    win(g, 0.8, 1.5, 0.1, -0.4);
+  },
+  // 7 雲端與地端比較：兩側與中間的橋樑
+  g => {
+    B(g, 0.5, 1.0, 0.5, 0xffffff, -1.1, 0.8, 0);
+    S(g, 0.4, 0xffffff, -1.1, 1.6, 0, { t: 0.9 });
+    B(g, 0.6, 0.6, 0.6, 0x0f766e, 1.1, 0.6, 0);
+    B(g, 0.3, 0.3, 0.3, 0x14b8a6, 1.1, 1.05, 0, { e: 1 });
+    M(g, new THREE.TorusGeometry(1.1, 0.04, 6, 30, Math.PI), 0x14b8a6, 0, 0.3, 0, { e: 1 });
+  },
+  // 8 企業 AI 應用：微縮城市、工廠、醫院與軌道
+  g => {
+    B(g, 0.4, 1.0, 0.4, 0xffffff, -0.8, 0.8, -0.3);
+    B(g, 0.35, 0.7, 0.35, 0xd7f1ec, -0.25, 0.65, 0.35);
+    B(g, 0.4, 1.2, 0.4, 0x99e6da, 0.3, 0.9, -0.45);
+    B(g, 0.55, 0.45, 0.5, 0x0f766e, 0.8, 0.52, 0.4);
+    B(g, 0.12, 0.7, 0.12, 0x334155, 1.0, 0.65, 0.25);
+    B(g, 0.5, 0.35, 0.4, 0xffffff, -0.7, 0.45, 0.7);
+    B(g, 0.3, 0.08, 0.08, 0x14b8a6, 0.3, 0.9, 0.9, { e: 1 });
+    B(g, 0.08, 0.3, 0.08, 0x14b8a6, 0.3, 0.9, 0.9, { e: 1 });
+    B(g, 2.2, 0.03, 0.08, 0x334155, 0, 0.33, -0.9);
+  },
+  // 9 AI 實作實驗室：工作台、浮動終端機與燒杯
+  g => {
+    B(g, 1.3, 0.08, 0.7, 0xe2e8f0, 0, 0.42, 0);
+    [[-0.6, -0.3], [0.6, -0.3], [-0.6, 0.3], [0.6, 0.3]].forEach(([x, z]) => B(g, 0.07, 0.36, 0.07, 0x94a3b8, x, 0.2, z));
+    B(g, 0.8, 0.5, 0.04, 0x0f3b3d, 0, 1.0, -0.45);
+    B(g, 0.7, 0.36, 0.02, 0x14b8a6, 0, 1.0, -0.43, { e: 1 });
+    [-0.35, 0.3].forEach(x => {
+      M(g, new THREE.CylinderGeometry(0.12, 0.12, 0.25, 10), 0xffffff, x, 0.6, 0.1, { t: 0.9 });
+      M(g, new THREE.CylinderGeometry(0.1, 0.1, 0.12, 10), 0x14b8a6, x, 0.56, 0.1, { e: 1 });
+    });
+  },
+  // 10 AI 未來與學習行囊：發光塔、星際軌道與知識寶箱
+  g => {
+    M(g, new THREE.CylinderGeometry(0.22, 0.32, 1.8, 12), 0xffffff, 0, 1.2, 0);
+    S(g, 0.22, 0x14b8a6, 0, 2.2, 0, { e: 1 });
+    M(g, new THREE.TorusGeometry(1.1, 0.03, 6, 48), 0x14b8a6, 0, 1.3, 0).rotation.x = 1.1;
+    B(g, 0.6, 0.3, 0.4, 0xffffff, 1.0, 0.45, 0.5);
+    B(g, 0.6, 0.1, 0.4, 0x99e6da, 1.0, 0.65, 0.5);
+  },
+];
+
+/* ---------- layout ---------- */
+const P = i => {
+  if (i === 0) return new THREE.Vector3(0, 0, 0);
+  const k = i - 1, a = (k / 10) * Math.PI * 2;
+  return new THREE.Vector3(Math.cos(a) * 8, Math.sin(k * 1.7) * 1.2 + 1.5, Math.sin(a) * 8);
+};
+
+/* ---------- build islands ---------- */
+const islands = ISLANDS.map((d, i) => {
+  const g = base(PAL[i]);
+  PROPS[i](g);
+  const pos = P(i);
+  g.position.copy(pos);
+  g.userData.idx = i;
+  scene.add(g);
+  const el = document.createElement('div');
+  el.className = 'label';
+  el.textContent = d.t;
+  labelsEl.appendChild(el);
+  return { ...d, i, g, pos, el, base: pos.y };
+});
+
+// 中央島到各島的虛線連結
+const linkMat = new THREE.LineBasicMaterial({ color: 0x7fd6c9, transparent: true, opacity: 0.5 });
+for (let i = 1; i < ISLANDS.length; i++) {
+  const geo = new THREE.BufferGeometry().setFromPoints([P(0), P(i)]);
+  scene.add(new THREE.Line(geo, linkMat));
+}
+
+// 粒子
+const N = 900, pa = new Float32Array(N * 3);
+for (let i = 0; i < N * 3; i++) pa[i] = (Math.random() - 0.5) * (i % 3 === 1 ? 40 : 70);
+const pg = new THREE.BufferGeometry();
+pg.setAttribute('position', new THREE.BufferAttribute(pa, 3));
+scene.add(new THREE.Points(pg, new THREE.PointsMaterial({ color: 0x00d9c0, size: 0.11, transparent: true, opacity: 0.55, depthWrite: false })));
+
+// 雲朵
+[[-14, -6, -10, 1.2], [12, -7, -8, 1.5], [-6, -9, 12, 1.8], [16, -5, 10, 1.0], [0, -11, -16, 2.0]].forEach(([x, y, z, s]) => {
+  const g = new THREE.Group(); g.position.set(x, y, z); g.scale.setScalar(s);
+  [[0, 0, 0, 1.2], [1.4, -0.2, 0.2, 0.9], [-1.3, -0.25, -0.1, 0.95], [0.5, 0.5, 0.3, 0.8]]
+    .forEach(([a, b, c, r]) => S(g, r, 0xffffff, a, b, c, { t: 0.85 }));
+  scene.add(g);
+});
+
+/* ---------- camera state & controls ---------- */
+const homeR = () => (innerWidth / innerHeight < 1 ? 30 : 21.5);
+const cur = { tx: 0, ty: 0, tz: 0, th: 0, ph: Math.acos(8 / 21.5), r: homeR() };
+const goal = { ...cur };
+let flying = false, active = null;
+
+function flyTo(i) {
+  active = i;
+  if (i === null) {
+    Object.assign(goal, { tx: 0, ty: 0, tz: 0, th: 0, ph: Math.acos(8 / 21.5), r: homeR() });
+    footEl.innerHTML = '<p>拖曳旋轉・滾輪或雙指縮放・點擊島嶼前往探索</p>';
+    homeBtn.disabled = true;
+  } else {
+    const isl = islands[i], p = isl.pos;
+    let ox = p.x, oz = p.z;
+    if (Math.hypot(ox, oz) < 0.1) { ox = 0; oz = 1; }
+    Object.assign(goal, { tx: p.x, ty: p.y + 0.8, tz: p.z, th: Math.atan2(ox, oz), ph: 1.25, r: 9 });
+    showCard(i);
+    homeBtn.disabled = false;
+  }
+  flying = true;
+  islands.forEach(x => x.el.classList.toggle('on', x.i === i));
+}
+function showCard(i) {
+  const isl = ISLANDS[i], nodes = KNOW[i];
+  const body = nodes
+    ? '<div class="nodes">' + nodes.map((n, j) => `<button class="node" data-j="${j}">${n.t}</button>`).join('') + '</div><div id="detail"></div>'
+    : '<span class="tag">第三階段開放知識內容</span>';
+  footEl.innerHTML = `<div id="card"><h2>${isl.t}</h2><p>${isl.d}</p>${body}</div>`;
+}
+footEl.addEventListener('click', e => {
+  const b = e.target.closest('.node');
+  if (!b || active === null) return;
+  const n = KNOW[active][+b.dataset.j];
+  document.getElementById('detail').innerHTML = `<h3>${n.t}</h3><p>${n.b}</p>` +
+    (n.l ? '<ul class="links">' + n.l.map(([k, u]) => `<li><a href="${u}" target="_blank" rel="noopener">${k}</a></li>`).join('') + '</ul>' : '');
+});
+homeBtn.addEventListener('click', () => flyTo(null));
+
+const ptrs = new Map();
+let downAt = null, moved = false, pinchD = 0;
+const pinchDist = () => { const [a, b] = [...ptrs.values()]; return Math.hypot(a.x - b.x, a.y - b.y); };
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+
+function pick(x, y) {
+  const r = host.getBoundingClientRect();
+  ndc.set(((x - r.left) / r.width) * 2 - 1, -((y - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  const hit = ray.intersectObjects(islands.map(i => i.g), true)[0];
+  if (!hit) return null;
+  let o = hit.object;
+  while (o && o.userData.idx === undefined) o = o.parent;
+  return o ? o.userData.idx : null;
+}
+
+host.addEventListener('pointerdown', e => {
+  host.setPointerCapture(e.pointerId);
+  ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  flying = false;
+  if (ptrs.size === 1) { downAt = { x: e.clientX, y: e.clientY }; moved = false; host.classList.add('drag'); }
+  if (ptrs.size === 2) { moved = true; pinchD = pinchDist(); }
+});
+host.addEventListener('pointermove', e => {
+  if (!ptrs.has(e.pointerId)) {
+    host.classList.toggle('hot', pick(e.clientX, e.clientY) !== null);
+    return;
+  }
+  const prev = ptrs.get(e.pointerId);
+  const dx = e.clientX - prev.x, dy = e.clientY - prev.y;
+  ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (ptrs.size === 1) {
+    if (Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y) > 6) moved = true;
+    if (moved) { cur.th -= dx * 0.006; cur.ph = clamp(cur.ph - dy * 0.006, 0.2, 1.5); }
+  } else if (ptrs.size === 2) {
+    const d = pinchDist();
+    cur.r = clamp(cur.r * (pinchD / d), 6, 40);
+    pinchD = d;
+  }
+});
+const release = e => {
+  if (!ptrs.has(e.pointerId)) return;
+  ptrs.delete(e.pointerId);
+  if (ptrs.size === 0) {
+    host.classList.remove('drag');
+    if (e.type === 'pointerup' && !moved && downAt) {
+      const i = pick(e.clientX, e.clientY);
+      if (i !== null) flyTo(i);
+    }
+    downAt = null;
+  }
+};
+host.addEventListener('pointerup', release);
+host.addEventListener('pointercancel', release);
+host.addEventListener('wheel', e => {
+  e.preventDefault();
+  flying = false;
+  cur.r = clamp(cur.r * Math.exp(e.deltaY * 0.001), 6, 40);
+}, { passive: false });
+addEventListener('resize', () => {
+  renderer.setSize(innerWidth, innerHeight);
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  if (active === null && !flying) goal.r = cur.r = homeR();
+});
+renderer.setSize(innerWidth, innerHeight);
+camera.aspect = innerWidth / innerHeight;
+camera.updateProjectionMatrix();
+
+/* ---------- loop ---------- */
+const clock = new THREE.Clock();
+const v = new THREE.Vector3();
+const lerpAng = (a, b, t) => a + ((((b - a) % (2 * Math.PI)) + 3 * Math.PI) % (2 * Math.PI) - Math.PI) * t;
+
+function frame() {
+  const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
+  if (flying) {
+    const a = 1 - Math.exp(-dt * 3);
+    cur.tx += (goal.tx - cur.tx) * a;
+    cur.ty += (goal.ty - cur.ty) * a;
+    cur.tz += (goal.tz - cur.tz) * a;
+    cur.ph += (goal.ph - cur.ph) * a;
+    cur.r += (goal.r - cur.r) * a;
+    cur.th = lerpAng(cur.th, goal.th, a);
+    const err = Math.abs(goal.tx - cur.tx) + Math.abs(goal.ty - cur.ty) + Math.abs(goal.tz - cur.tz) + Math.abs(goal.r - cur.r);
+    if (err < 0.01) flying = false;
+  }
+  camera.position.set(
+    cur.tx + cur.r * Math.sin(cur.ph) * Math.sin(cur.th),
+    cur.ty + cur.r * Math.cos(cur.ph),
+    cur.tz + cur.r * Math.sin(cur.ph) * Math.cos(cur.th));
+  camera.lookAt(cur.tx, cur.ty, cur.tz);
+  islands.forEach(isl => { isl.g.position.y = isl.base + Math.sin(t * 0.8 + isl.i) * 0.12; });
+  renderer.render(scene, camera);
+  islands.forEach(isl => {
+    v.copy(isl.pos); v.y += 2.6; v.project(camera);
+    const x = (v.x * 0.5 + 0.5) * innerWidth, y = (-v.y * 0.5 + 0.5) * innerHeight;
+    isl.el.style.display = v.z < 1 ? 'block' : 'none';
+    isl.el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -100%)`;
+  });
+  requestAnimationFrame(frame);
+}
+frame();
+</script>
+</body>
+</html>
