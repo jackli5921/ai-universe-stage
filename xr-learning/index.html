@@ -21,9 +21,12 @@
 <div class="scene-hint"><strong>拖曳旋轉</strong>・點選地標探索課程</div><div class="direction-pad" aria-label="移動與旋轉視角"><button class="north" data-camera="up" aria-label="向上移動">↑</button><button class="west" data-camera="left" aria-label="向左移動">←</button><button class="home" id="centerBtn" aria-label="回到中心">●</button><button class="east" data-camera="right" aria-label="向右移動">→</button><button class="south" data-camera="down" aria-label="向下移動">↓</button></div><div class="scene-foot-controls"><div class="control-set"><button id="motionBtn" aria-label="暫停動態">Ⅱ</button><button id="dragModeBtn" aria-label="切換拖曳模式">⟳ 旋轉</button></div><div class="control-set"><button id="pinToggle" aria-label="顯示或隱藏地標">◎</button><button id="zoomOut" aria-label="縮小視角">−</button><button id="zoomIn" aria-label="放大視角">＋</button><button id="homeBtn" aria-label="重設為全區鳥瞰">⌂</button></div></div><div class="view-note" id="viewNote">全島鳥瞰・11 個 XR 學習站</div><div class="help-pop" id="helpPop" hidden><button id="closeHelp">關閉</button><h3>如何探索 XR 學習島</h3><p>拖曳地圖旋轉視角；切換「平移」後可移動地圖。滾輪或右下角按鈕可以縮放。</p><p>點選地圖地標或右側課程卡，查看該站學習主題；分類按鈕可快速篩選 AR、VR、MR 與實作內容。</p></div></section>
 <aside class="guide-panel"><div class="guide-head"><div><div class="guide-overline">CAMPUS GUIDE</div><h2>學習站與課程導覽</h2></div><div class="guide-intro">點選地標<br>拉近視角探索</div></div><div class="category-row" id="categoryRow"><button class="category active" data-category="all">全部</button><button class="category" data-category="入門">XR入門</button><button class="category" data-category="AR">AR擴增</button><button class="category" data-category="VR">VR沉浸</button><button class="category" data-category="MR">MR混合</button><button class="category" data-category="創作">設計創作</button><button class="category" data-category="實作">實作關卡</button></div><div class="course-list" id="courseList"></div><div class="current-view"><div><div class="current-title">CURRENT VIEW</div><div class="current-name" id="currentName">全島鳥瞰・11 個 XR 學習站</div></div><div class="progress"><strong id="progressCount">0 / 11</strong><span>已探索學習站</span></div></div></aside></div>
 <footer class="bottom-note"><span>拖曳旋轉・切換「拖曳：平移」或按方向鍵移動視角・點擊學習站探索知識</span><span class="live"><i></i>地圖待探索</span></footer></div>
-<script src="https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.159.0/examples/js/controls/OrbitControls.js"></script>
-<script>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.159.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const lessons=[
 {id:'01',title:'XR 世界入口',short:'XR入口',en:'XR GATEWAY',cat:'入門',type:'XR',count:4,color:'#218d7d',desc:'認識 XR、AR、VR 與 MR 的差異，建立沉浸式科技的全貌。',pos:[0,0],radius:3.25,land:'#9cc98a',edge:'#678d69',style:'gateway'},
@@ -46,7 +49,7 @@ const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerP
 renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.8));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.14;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 const world=new THREE.Scene();world.background=new THREE.Color('#d9eee8');world.fog=new THREE.Fog('#d9eee8',39,78);
 const camera=new THREE.PerspectiveCamera(37,1,.1,150);camera.position.set(0,26,31);
-const controls=new THREE.OrbitControls(camera,canvas);controls.target.set(0,.3,0);controls.enableDamping=true;controls.dampingFactor=.065;controls.minDistance=19;controls.maxDistance=47;controls.minPolarAngle=.34;controls.maxPolarAngle=1.19;controls.autoRotate=true;controls.autoRotateSpeed=.28;controls.screenSpacePanning=false;controls.cursorStyle='grab';
+const controls=new OrbitControls(camera,canvas);controls.target.set(0,.3,0);controls.enableDamping=true;controls.dampingFactor=.065;controls.minDistance=19;controls.maxDistance=47;controls.minPolarAngle=.34;controls.maxPolarAngle=1.19;controls.autoRotate=true;controls.autoRotateSpeed=.28;controls.screenSpacePanning=false;
 const hemi=new THREE.HemisphereLight(0xf6fff4,0x678a78,2.15);world.add(hemi);
 const key=new THREE.DirectionalLight(0xfff0d4,3.15);key.position.set(-19,29,16);key.castShadow=true;key.shadow.mapSize.set(2048,2048);key.shadow.camera.left=-28;key.shadow.camera.right=28;key.shadow.camera.top=28;key.shadow.camera.bottom=-28;key.shadow.bias=-.00035;key.shadow.normalBias=.035;key.shadow.radius=4;world.add(key);world.add(key.target);
 const fill=new THREE.DirectionalLight(0xa6e5ee,1.05);fill.position.set(16,14,-18);world.add(fill);
